@@ -1,7 +1,8 @@
 ﻿using System;
 
 using System.Windows;
-
+using ColemanPeerToPeer.MVVM.ViewModel;
+using ColemanPeerToPeer.MVVM.Model;
 using System.Windows.Input;
 
 
@@ -41,6 +42,15 @@ namespace ColemanPeerToPeer
                 Application.Current.MainWindow.WindowState = WindowState.Maximized;
             else
                 App.Current.MainWindow.WindowState = WindowState.Normal;
+        }
+
+        private void Btn_SendMessage(object sender, RoutedEventArgs e)
+        {
+            //MessageBox.Show("click");
+            MainViewModel ad = new MainViewModel();
+            MessageModel aa = new MessageModel();
+            aa.Message = "sdsdsd";
+            ad.Messages.Add(aa);
         }
     }
 }
