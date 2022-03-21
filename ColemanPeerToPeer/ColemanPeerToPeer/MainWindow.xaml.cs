@@ -4,7 +4,7 @@ using System.Windows;
 using ColemanPeerToPeer.MVVM.ViewModel;
 using ColemanPeerToPeer.MVVM.Model;
 using System.Windows.Input;
-
+using System.Collections.Specialized;
 
 namespace ColemanPeerToPeer
 {
@@ -23,7 +23,15 @@ namespace ColemanPeerToPeer
         public MainWindow()
         {
             InitializeComponent();
-            ViewManager.SetMainWindowInstance(this);
+            ViewManager.SetMainWindowInstance(this); //used to keep aid UI windows
+            ((INotifyCollectionChanged)MessageListView.Items).CollectionChanged += ListView_CollectionChanged;
+        }
+
+        private void ListView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // if message is added to list view, scroll to the new item into view 
+            if (e.Action == NotifyCollectionChangedAction.Add)
+                MessageListView.ScrollIntoView(e.NewItems[0]);  
         }
 
         private void ConnectToMainViewModel()

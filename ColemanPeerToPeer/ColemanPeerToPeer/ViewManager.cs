@@ -5,6 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/* 
+ * Used to keep allow the passing of arguments between mainWindow and mainViewModel
+ * by being an intermediary to get each other's instances as
+ * both classes get instantiated in InitializeComponent() of main window
+ */
+
 namespace ColemanPeerToPeer
 {
     public static class ViewManager

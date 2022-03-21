@@ -145,6 +145,7 @@
 
             <ListView ItemsSource="{Binding SelectedChat.Messages}"
                       Background="Transparent"
+                      x:Name="MessageListView"
                       BorderThickness="0"
                       ItemContainerStyle="{StaticResource ChatItem}"
                       Margin="8,0,0,0"

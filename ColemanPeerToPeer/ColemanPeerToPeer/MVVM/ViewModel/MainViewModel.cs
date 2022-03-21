@@ -23,6 +23,8 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         public string userNameColor;
 
         private string _username;
+        public string _profilePicture = "https://picsum.photos/200/300";
+
 
         //public interface for username
         public string Username
@@ -73,15 +75,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             int users = new Random().Next(0, 100);
 
             
-            SendCommand = new RelayCommand(o =>
-            {
-                Messages.Add(new MessageModel
-                {
-                    Message = Message,
-                    FirstMessage = false
-                });
-                Message = "";
-            });
+            SendCommand = new RelayCommand(SendMessage);
             
             
             
@@ -91,9 +85,25 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 
         }
 
-        public void SendMessage()
+        public void SendMessage(object o)
         {
-            MessageBox.Show("test");
+            DisplayMessageToView();
+
+            Message = ""; //Clears textbox
+        }
+
+        private void DisplayMessageToView()
+        {
+            SelectedChat.Messages.Add(new MessageModel
+            {
+                Username = Username,
+                UsernameColor = userNameColor,
+                ImageSource = _profilePicture,
+                Message = Message,
+                Time = DateTime.Now,
+                IsFromMe = true,
+                FirstMessage = true
+            });
         }
 
         public void SetUsers(ObservableCollection<UserModel> U)
