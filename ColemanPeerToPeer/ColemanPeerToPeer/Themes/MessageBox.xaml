@@ -14,7 +14,7 @@
                             <TextBox VerticalAlignment="Stretch"
                                      VerticalContentAlignment="Center"
                                      HorizontalAlignment="Stretch"
-                                     x:Name="MessageBox"
+                                     x:Name="SendingMessageBox"
                                      Background="Transparent"
                                      TextWrapping="Wrap"
                                      BorderThickness="0"
@@ -24,7 +24,6 @@
                                      Text="{Binding Message, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
                                     <KeyBinding Command="{Binding SendCommand}" Key="Return"/>
-                                    <KeyBinding Command="{Binding SendCommand}" Key="NumPad0"/>
                                 </TextBox.InputBindings>
                             </TextBox>
 
@@ -38,7 +37,7 @@
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Text, ElementName=MessageBox}" Value="">
+                                            <DataTrigger Binding="{Binding Text, ElementName=SendingMessageBox}" Value="">
                                                 <Setter Property="Visibility" Value="Visible"/>
                                             </DataTrigger>
                                         </Style.Triggers>

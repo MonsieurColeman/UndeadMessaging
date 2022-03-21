@@ -7,8 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ColemanPeerToPeer.Core
-{
-    class ObservableObject : INotifyPropertyChanged
+{ 
+    //leverages reflection to update the UI
+    public class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

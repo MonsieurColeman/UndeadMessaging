@@ -3,7 +3,7 @@
     <Style TargetType="ListViewItem" x:Key="UserCard">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="DarkGray"/>
+                <Setter Property="Background" Value="Orange"/>
             </Trigger>
         </Style.Triggers>
 
@@ -35,7 +35,7 @@
                                 <Label Content="{Binding Username}"
                                        Foreground="White"/>
                                 <Label Content="{Binding LastMessage}"
-                                       Foreground="Gray"
+                                       Foreground="Black"
                                        FontSize="10"/>
                             </StackPanel>
 

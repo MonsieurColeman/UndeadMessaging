@@ -13,9 +13,28 @@ namespace ColemanPeerToPeer
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private MainViewModel _viewModel;
+        private string username = "Me";
+        private string profileColor = "#000000";
+        string profilePicture = "https://picsum.photos/200/300";
+
+        #region Startup Functions
         public MainWindow()
         {
             InitializeComponent();
+            ViewManager.SetMainWindowInstance(this);
+        }
+
+        private void ConnectToMainViewModel()
+        {
+            _viewModel = ViewManager.GetMainViewModelInstance();
+        }
+
+        private void ViewModelCheck()
+        {
+            if (_viewModel == null)
+                ConnectToMainViewModel();
         }
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
@@ -25,7 +44,15 @@ namespace ColemanPeerToPeer
                 DragMove();
             }
         }
+        #endregion
 
+        public void Btn_AddMessage(object sender, RoutedEventArgs e)
+        {
+            ViewModelCheck();
+            //_viewModel.AddMessageToChat("cheese");
+        }
+
+        #region Window Ease of Use Functions
         private void Btn_Close_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -43,14 +70,38 @@ namespace ColemanPeerToPeer
             else
                 App.Current.MainWindow.WindowState = WindowState.Normal;
         }
+        #endregion
 
         private void Btn_SendMessage(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show("click");
             MainViewModel ad = new MainViewModel();
             MessageModel aa = new MessageModel();
             aa.Message = "sdsdsd";
             ad.Messages.Add(aa);
         }
+
+        private void Message_KeyDown(object sender, KeyEventArgs e)
+        {
+            //ignore if not return key
+            if (e.Key != Key.Return)
+                return;
+
+            //make sure obj is instantiated
+            ViewModelCheck();
+
+            //Add message to the view model and clear textbox
+            _viewModel.AddMessageToChat(new MessageModel
+            {
+                Username = username,
+                UsernameColor = profileColor,
+                ImageSource = profilePicture,
+                Message = _viewModel.Message,
+                Time = DateTime.Now,
+                IsFromMe = false,
+                FirstMessage = true
+            });
+            _viewModel.Message = "";
+        }
+
     }
 }

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace ColemanPeerToPeer.MVVM.Model
 {
-    class UserModel
+    public class UserModel
     {
         public string Username { get; set; }
+        public string ChatName { get; set; }
         public string ImageSource { get; set; }
         public ObservableCollection<MessageModel> Messages { get; set; }
         public string LastMessage => Messages.Last().Message;
