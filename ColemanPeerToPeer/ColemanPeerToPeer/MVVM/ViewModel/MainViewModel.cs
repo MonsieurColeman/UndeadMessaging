@@ -87,6 +87,8 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 
         public void SendMessage(object o)
         {
+            if (SelectedChat == null || String.IsNullOrWhiteSpace(Message))
+                return;
             DisplayMessageToView();
 
             Message = ""; //Clears textbox

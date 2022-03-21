@@ -7,7 +7,7 @@
             </Trigger>
         </Style.Triggers>
 
-        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="Background" Value="DarkOrange"/>
 
         <Setter Property="Template">
             <Setter.Value>
@@ -33,10 +33,12 @@
 
                             <StackPanel>
                                 <Label Content="{Binding Username}"
-                                       Foreground="White"/>
+                                       Foreground="White"
+                                       Margin="3,3,0,-5"/>
                                 <Label Content="{Binding LastMessage}"
                                        Foreground="Black"
-                                       FontSize="10"/>
+                                       FontSize="10"
+                                       Margin="3,-2,0,0"/>
                             </StackPanel>
 
                         </StackPanel>

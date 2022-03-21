@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ColemanPeerToPeer" xmlns:viewmodel="clr-namespace:ColemanPeerToPeer.MVVM.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="1200"
-        Background="Chocolate"
+        Title="MainWindow" Height="650" Width="1400"
+        Background="#fca344"
         WindowStyle="None"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip">
@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
@@ -68,7 +68,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition />
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
             <Label Content="Users"
                    VerticalAlignment="Center"
@@ -85,7 +85,7 @@
 
             <StackPanel Grid.Row="2"
                         Orientation="Horizontal"
-                        Background="#ffac70">
+                        Background="DarkOrange">
                 <Border CornerRadius="25"
                         Width="30"
                         Height="30"
@@ -95,8 +95,8 @@
                     <Label Content="{Binding Username}"
                            Foreground="White"
                            FontWeight="SemiBold"
-                           Margin="0,-5,0,-5"/>
-                    <Label Content="Status"
+                           Margin="0,-10,0,0"/>
+                    <Label Content="Status: Connected"
                            Foreground="White"
                            FontWeight="SemiBold"
                            FontSize="10"
@@ -151,7 +151,7 @@
                       Margin="8,0,0,0"
                       Grid.Row="1"/>
 
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="2" Background="DarkOrange">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="90"/>
@@ -160,41 +160,40 @@
                 <TextBox Grid.Row="1"
                          Height="50"
                          Style="{StaticResource MessageBox}"
-                         Grid.ColumnSpan="2"
+                         Grid.ColumnSpan="1"
                          />
 
                 <!--KeyDown="Message_KeyDown"-->
 
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Right"
+
+
+                <Border Width="25" Height="25"
                             Grid.Column="1"
-                            Margin="0,0,16,0">
-
-                    <Button
-                        Width="20"
-                        Height="20"
-                        Margin="5,5,5,0"
-                        BorderThickness="0">
-                        <Button.Background>
-                            <ImageBrush ImageSource="./Icons/plusBtn.png"
-                                RenderOptions.BitmapScalingMode="Fant"/>
-                        </Button.Background>
-                    </Button>
+                            HorizontalAlignment="Left"
+                            Background="White"
+                            CornerRadius="25"
+                            Margin="2,5,16,0">
                     
-                    <Button
-                        Width="20"
-                        Height="20"
-                        Margin="5,5,16,0"
-                        BorderThickness="0"
-                        Click="Btn_SendMessage">
-                        <Button.Background>
+                </Border>
+
+                <Button Style="{StaticResource MyButtonStyle}" 
+                            BorderBrush="Transparent"
+                            Focusable="False" 
+                            Width="20" 
+                            Grid.Column="1"
+                            Height="20" 
+                            BorderThickness="0"
+                            Command="{Binding SendCommand}"
+                            VerticalAlignment="Center" 
+                            HorizontalAlignment="Left" 
+                            Margin="5,5,16,0">
+                        <Button.Background >
                             <ImageBrush ImageSource="./Icons/sendBtn.png"
-                                RenderOptions.BitmapScalingMode="Fant"/>
+                                        RenderOptions.BitmapScalingMode="Fant"/>
                         </Button.Background>
                     </Button>
 
-
-                </StackPanel>
+                
             </Grid>
         </Grid>
     </Grid>

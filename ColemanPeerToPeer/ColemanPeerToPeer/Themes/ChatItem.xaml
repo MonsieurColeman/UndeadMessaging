@@ -6,7 +6,7 @@
                 <ControlTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="30" Height="30"
-                                 Margin="10,0,0,-5">
+                                 Margin="10,0,0,0">
                             <Ellipse.Fill>
                                 <ImageBrush ImageSource="{Binding ImageSource}"
                                             RenderOptions.BitmapScalingMode="Fant"/>
@@ -20,18 +20,21 @@
                                            Foreground="{Binding UsernameColor}"
                                            FontWeight="SemiBold"
                                            VerticalAlignment="Center"
-                                           Margin="0,0,-5,0"/>
+                                           Margin="3,7,-5,7"/>
                                 <Label Content="{Binding Time}"
                                            Foreground="Wheat"
                                            FontSize="8"
                                            FontWeight="SemiBold"
                                            VerticalAlignment="Center"
-                                           Margin="0,0,-5,0"/>
+                                           Margin="5,9,-5,7"/>
                             </StackPanel>
 
-                            <Label Content="{Binding Message}"
+                            <TextBlock Text="{Binding Message}"
                                            Foreground="White"
                                            FontWeight="SemiBold"
+                                           Margin="8,-10,-5,15"
+                                           Width="1000"
+                                           TextWrapping="WrapWithOverflow"
                                            VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
