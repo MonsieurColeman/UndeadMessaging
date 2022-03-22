@@ -16,7 +16,7 @@ namespace Week7WCF
     [ServiceContract]
     public interface IBasicService
     {
-        [OperationContract] void sendMessage(string msg);
+        [OperationContract] void sendMessage(MessageProtocol msg);
         [OperationContract] string getMessage();
         [OperationContract] void UploadFile(RemoteFileInfo request);
 

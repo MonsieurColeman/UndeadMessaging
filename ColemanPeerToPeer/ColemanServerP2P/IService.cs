@@ -14,11 +14,11 @@ namespace ColemanServerP2P
         [OperationContract]
         void SendMSG(string msg);
 
-
         [OperationContract]
         string GetMSG();
 
+
         [OperationContract]
-        void TestMSG(string msg);
+        void TestMSG(MessageProtocol msg);
     }
 }

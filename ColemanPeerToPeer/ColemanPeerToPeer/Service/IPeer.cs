@@ -19,6 +19,6 @@ namespace ColemanPeerToPeer.Service
 
 
         [OperationContract]
-        void TestMSG(string msg);
+        void TestMSG(MessageProtocol msg);
     }
 }

@@ -30,12 +30,12 @@ namespace ColemanServerP2P
 
         public void SendMSG(string msg)
         {
-            Console.WriteLine("\n  Service received message {0} , i = {1}", i++);
+            Console.WriteLine("\n  Service received message {0} , i =", i++);
         }
 
-        public void TestMSG(string msg)
+        public void TestMSG(MessageProtocol msg)
         {
-            Console.WriteLine("\n  Service received message {0} , i = {1}", i++);
+            Console.WriteLine("\n  Service received message {0} , i =", i++);
 
         }
 

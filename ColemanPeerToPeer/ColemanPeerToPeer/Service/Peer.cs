@@ -67,7 +67,8 @@ namespace ColemanPeerToPeer.Service
             //Func<string> fnc = () => { svc.SendMSG(Converter.MessageProtocolToJSON(msg)); return "service succeeded"; };
             string code = ServiceRetryWrapper(fnc);
             */
-            Func<string> fnc = () => { svc.SendMSG("testMessage"); return "service succeeded"; };
+            //Func<string> fnc = () => { svc.SendMSG("testMessage"); return "service succeeded"; };
+            Func<string> fnc = () => { svc.TestMSG(msg); return "service succeeded"; };
             string code = ServiceRetryWrapper(fnc);
         }
 

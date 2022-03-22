@@ -28,9 +28,9 @@ namespace Week7WCF
     {
         int i; //represents state of the service object
 
-        public void sendMessage(string msg)
+        public void sendMessage(MessageProtocol msg)
         {
-            Console.WriteLine("\n  Service received message {0} , i = {1}", msg, i++);
+            Console.WriteLine("\n  Service received message {0} , i = ", i++);
         }
         public string getMessage()
         {

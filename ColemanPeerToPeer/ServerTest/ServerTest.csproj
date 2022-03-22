@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Host.cs" />
     <Compile Include="IService.cs" />
+    <Compile Include="MessageProtocol.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service.cs" />
   </ItemGroup>
