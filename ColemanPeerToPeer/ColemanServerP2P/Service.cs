@@ -26,22 +26,35 @@ namespace ColemanServerP2P
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class BasicService : IBasicService
     {
-        int i;
-
-        public void SendMSG(string msg)
+        public void SendMSG(MessageProtocol msg)
         {
-            Console.WriteLine("\n  Service received message {0} , i =", i++);
+            Console.WriteLine("\n  Server has received message from {0}", msg.sourceEndpoint);
+
+            Host._IncomingQueue.enQ(msg);
         }
 
-        public void TestMSG(MessageProtocol msg)
+        /*
+         * Interface for clients to immediately know if they can join
+         */
+        public bool Join(MessageProtocol msg)
         {
-            Console.WriteLine("\n  Service received message {0} , i =", i++);
-
+            if(msg.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(msg.messageBody))
+            {
+                Host._IncomingQueue.enQ(msg);
+                return true;
+            }
+            return false;
         }
 
-        public string GetMSG()
+        public MessageProtocol GetMSG()
         {
-            return "";
+            return Host._IncomingQueue.deQ();
+        }
+    }
+}
+
+
+/*
             new MessageProtocol
             {
                 sourceEndpoint = "Server",
@@ -49,6 +62,5 @@ namespace ColemanServerP2P
                 messageBody = "test",
                 destinationEndpoint = "unkown"
             };
-        }
-    }
-}
+ 
+ */

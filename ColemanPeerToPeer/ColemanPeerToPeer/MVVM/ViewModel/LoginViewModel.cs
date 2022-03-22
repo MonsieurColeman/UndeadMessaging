@@ -32,15 +32,18 @@ namespace ColemanPeerToPeer
 
         private void Btn_Login(object sender, RoutedEventArgs e)
         {
-            PerformLogin();
+            if (String.IsNullOrWhiteSpace(userColorTextbox.Text) || String.IsNullOrWhiteSpace(usernameTextbox.Text))
+                return;
+            PerformLogin(usernameTextbox.Text);
+            ViewManager.GetMainViewModelInstance().Username = usernameTextbox.Text; //doesnt work
             _MainWindow.loginSuccessful = true;
             this.Close();
         }
 
 
-        private void PerformLogin()
+        private void PerformLogin(string username)
         {
-            peer.SendMessage(GetJoinMessage());
+            peer.JoinServer(username);
         }
 
         private MessageProtocol GetJoinMessage()

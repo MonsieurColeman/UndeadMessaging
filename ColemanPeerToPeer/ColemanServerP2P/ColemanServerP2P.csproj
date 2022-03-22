@@ -44,8 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockingQueue.cs" />
     <Compile Include="Host.cs" />
+    <Compile Include="Inventory.cs" />
     <Compile Include="IService.cs" />
+    <Compile Include="JobManager.cs" />
     <Compile Include="MessageProtocol.cs" />
     <Compile Include="Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

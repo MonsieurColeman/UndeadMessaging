@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ColemanServerP2P
 {
-    class Host
+    public static class Host
     {
+        public static BlockingQueue<MessageProtocol> _IncomingQueue = new BlockingQueue<MessageProtocol>();
+        public static BlockingQueue<MessageProtocol> _OutboundQueue = new BlockingQueue<MessageProtocol>();
+        public static Dictionary<string, string> _UserList = new Dictionary<string, string>();
+
+        /* 
+         * Establishes a channel for clients to connect to
+         */
         static ServiceHost CreateChannel(string url)
         {
             WSHttpBinding binding = new WSHttpBinding(); //provide binding to clients | its a handshake to agree on protocols and security
@@ -18,18 +26,44 @@ namespace ColemanServerP2P
             host.AddServiceEndpoint(typeof(IBasicService), binding, address); //connects the service to the endpoint address with the communication protocols binded
             return host;
         }
+
+        /* 
+         * Perform job
+         */
+
+        private static void DoSomething(MessageProtocol job)
+        {
+            Console.WriteLine("I did something");
+        }
+        
         static void Main(string[] args)
         {
-            Console.Title = "BasicHttp Service Host";
-            Console.Write("\n  Starting Programmatic Basic Service");
+            Console.Title = "WSHttpBinding Service Host";
+            Console.Write("\n  Starting Programmatic Service");
             Console.Write("\n =====================================\n");
 
             ServiceHost host = null;
+
             try
             {
+                //Open Connection
                 host = CreateChannel("http://localhost:8080/BasicService");
                 host.Open();
-                Console.Write("\n  Started BasicService - Press key to exit:\n");
+                Console.Write("\n  The service is running - Press key to exit:\n");
+                
+                //Start thread to accept requests
+                Thread t = new Thread(() =>
+                {
+                    MessageProtocol job;
+                    while (true)
+                    {
+                        job = _IncomingQueue.deQ();
+                        DoSomething(job);
+                    }
+                });
+                t.Start();
+
+                //Block to allow console to stay up
                 Console.ReadKey();
             }
             catch (Exception ex)

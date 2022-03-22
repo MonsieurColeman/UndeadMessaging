@@ -33,8 +33,22 @@ namespace ColemanPeerToPeer.Service
         {
             // input string is captured in body of functor
             // Func<string> return string is discarded
-            Func<string> fnc = () => { svc.TestMSG(msg); return "service succeeded"; };
+            Func<string> fnc = () => { svc.SendMSG(msg); return "service succeeded"; };
             string code = ServiceHandler.AttemptService(fnc);
+        }
+
+        public bool JoinServer(string username)
+        {
+            MessageProtocol msg = new MessageProtocol()
+            {
+                sourceEndpoint = "me",
+                messageBody = username,
+                messageProtocolType = MessageType.join,
+                destinationEndpoint = "Server"
+            };
+            if (svc != null)
+                return svc.Join(msg);
+            return false;
         }
 
         public string GetMessage()

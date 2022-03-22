@@ -12,13 +12,12 @@ namespace ColemanServerP2P
     public interface IBasicService
     {
         [OperationContract]
-        void SendMSG(string msg);
+        void SendMSG(MessageProtocol msg);
 
         [OperationContract]
-        string GetMSG();
-
+        MessageProtocol GetMSG();
 
         [OperationContract]
-        void TestMSG(MessageProtocol msg);
+        bool Join(MessageProtocol msg);
     }
 }
