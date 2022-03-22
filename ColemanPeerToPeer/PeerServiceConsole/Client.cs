@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ServiceModel;
 
-namespace ColemanPeerToPeer.Service
+namespace PeerServiceConsole
 {
-    class Peer
+    class Client
     {
+        public static string uuu = "http://localhost:8080/BasicService";
         IBasicService svc;
 
         /*
@@ -21,12 +14,12 @@ namespace ColemanPeerToPeer.Service
          * Channel doesn't attempt to connect to server
          * until first service call.
          */
-        public Peer(string url)
+        Client(string url)
         {
-            WSHttpBinding binding = new WSHttpBinding();
+            BasicHttpBinding binding = new BasicHttpBinding();
             EndpointAddress address = new EndpointAddress(url);
             ChannelFactory<IBasicService> factory = new ChannelFactory<IBasicService>(binding, address);
-            svc = factory.CreateChannel(); //returns an object of that service           
+            svc = factory.CreateChannel();
         }
 
         //----< Wrapper attempts to call service method several times >------
@@ -40,17 +33,17 @@ namespace ColemanPeerToPeer.Service
             string msg;
             while (true)
             {
-                try //invoke the function
+                try
                 {
                     msg = fnc.Invoke();
                     break;
                 }
-                catch (Exception exc) //if you cant invoke (send message)
+                catch (Exception exc)
                 {
                     if (count > 4)
                     {
                         return "Max retries exceeded";
-                    } //say so
+                    }
                     Console.Write("\n  {0}", exc.Message);
                     Console.Write("\n  service failed {0} times - trying again", ++count);
                     Thread.Sleep(100);
@@ -59,24 +52,40 @@ namespace ColemanPeerToPeer.Service
             }
             return msg;
         }
-        public void SendMessage(MessageProtocol msg)
+        void SendMessage(MessageProtocol msg)
         {
             // input string is captured in body of functor
             // Func<string> return string is discarded
-            /*
-            //Func<string> fnc = () => { svc.SendMSG(Converter.MessageProtocolToJSON(msg)); return "service succeeded"; };
-            string code = ServiceRetryWrapper(fnc);
-            */
-            Func<string> fnc = () => { svc.SendMSG("testMessage"); return "service succeeded"; };
-            string code = ServiceRetryWrapper(fnc);
+
+            Func<string> fnc = () => { svc.SendMSG(new MessageProtocol { }); return "service succeeded"; };
+            ServiceRetryWrapper(fnc);
         }
 
-        public string GetMessage()
+        string GetMessage()
         {
             MessageProtocol msg;
-            //Func<string> fnc = () => { msg = svc.GetMSG(); return "something something something"; };
-            //return ServiceRetryWrapper(fnc);
-            return "";
+            Func<string> fnc = () => { msg = svc.GetMSG(); return "this does something"; };
+            return ServiceRetryWrapper(fnc);
+        }
+
+        static void Main(string[] args)
+        {
+            Console.Title = "BasicHttp Client";
+            Console.Write("\n  Starting Programmatic Basic Service Client");
+            Console.Write("\n ============================================\n");
+            MessageProtocol msg = new MessageProtocol { };
+            string url = "http://localhost:8080/BasicService";
+            Client client = new Client(uuu);
+            string mmssgg;
+
+
+            client.SendMessage(msg);
+            client.SendMessage(msg);
+            client.SendMessage(msg);
+            client.SendMessage(msg);
+            client.SendMessage(msg);
+            mmssgg = client.GetMessage();
+            Console.Write("\n  Message recieved from Service: {0}\n\n", mmssgg);
         }
     }
 }

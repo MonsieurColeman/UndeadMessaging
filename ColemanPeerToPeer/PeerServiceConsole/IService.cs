@@ -5,20 +5,17 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
-
-namespace ColemanPeerToPeer.Service
+namespace PeerServiceConsole
 {
     [ServiceContract]
     public interface IBasicService
     {
         [OperationContract]
-        void SendMSG(string msg);
-
-        [OperationContract]
-        string GetMSG();
+        void SendMSG(MessageProtocol msg);
 
 
         [OperationContract]
-        void TestMSG(string msg);
+        MessageProtocol GetMSG();
     }
+
 }

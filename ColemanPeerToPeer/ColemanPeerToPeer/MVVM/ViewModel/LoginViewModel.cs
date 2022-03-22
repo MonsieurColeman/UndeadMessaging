@@ -40,19 +40,18 @@ namespace ColemanPeerToPeer
 
         private void PerformLogin()
         {
-
+            peer.SendMessage(GetJoinMessage());
         }
 
-        private void GetJoinMessage()
+        private MessageProtocol GetJoinMessage()
         {
-            MessageProtocol messageProtocol = new MessageProtocol()
+            return new MessageProtocol()
             {
                 sourceEndpoint = url,
                 messageProtocolType = MessageType.join,
                 messageBody = "thisIsATest",
                 destinationEndpoint = "server"
             };
-            peer.SendMessage(messageProtocol);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
