@@ -18,6 +18,7 @@ namespace ColemanPeerToPeer
         private string username = "Me";
         private string profileColor = "#000000";
         string profilePicture = "https://picsum.photos/200/300";
+        public bool loginSuccessful = false;
 
         #region Startup Functions
         public MainWindow()
@@ -25,6 +26,11 @@ namespace ColemanPeerToPeer
             InitializeComponent();
             ViewManager.SetMainWindowInstance(this); //used to keep aid UI windows
             ((INotifyCollectionChanged)MessageListView.Items).CollectionChanged += ListView_CollectionChanged;
+            LoginView loginView = new LoginView(this);
+            loginView.ShowDialog();
+            if(!loginSuccessful)
+                Application.Current.Shutdown();
+
         }
 
         private void ListView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

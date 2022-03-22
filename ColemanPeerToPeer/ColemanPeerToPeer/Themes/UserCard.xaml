@@ -3,7 +3,7 @@
     <Style TargetType="ListViewItem" x:Key="UserCard">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="Orange"/>
+                <Setter Property="Background" Value="#ffbc6b"/>
             </Trigger>
         </Style.Triggers>
 
