@@ -6,8 +6,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace delLater
+namespace ColemanPeerToPeer.Service
 {
+    //----< Wrapper attempts to call service method several times >------
+    /*
+     *  Func<string> is a delegate that invokes functions
+     *  which take no arguments and return strings
+     */
+
     public static class ServiceHandler
     {
         public static string AttemptService(Func<string> fnc)

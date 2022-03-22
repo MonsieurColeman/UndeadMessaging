@@ -76,7 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converter.cs" />
+    <Compile Include="Service\Converter.cs" />
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="Service\ServiceHandler.cs" />
     <Compile Include="Service\IPeer.cs" />
