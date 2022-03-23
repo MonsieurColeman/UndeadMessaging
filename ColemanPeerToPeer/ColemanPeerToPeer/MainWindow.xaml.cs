@@ -88,10 +88,13 @@ namespace ColemanPeerToPeer
 
         private void Btn_SendMessage(object sender, RoutedEventArgs e)
         {
+            /*
             MainViewModel ad = new MainViewModel();
             MessageModel aa = new MessageModel();
             aa.Message = "sdsdsd";
             ad.Messages.Add(aa);
+            */
+            MessageBox.Show("no");
         }
 
         private void Message_KeyDown(object sender, KeyEventArgs e)

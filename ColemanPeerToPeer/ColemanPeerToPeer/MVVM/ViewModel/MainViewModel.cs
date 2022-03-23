@@ -2,6 +2,7 @@
 using ColemanPeerToPeer.MVVM.Model;
 using ColemanPeerToPeer.TestScripts;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -30,7 +31,9 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         public string Username
         {
             get { return _username; }
-            set { _username = value; }
+            set { _username = value;
+                OnPropertyChanged();
+            }
         }
 
 
@@ -67,8 +70,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             Messages = new ObservableCollection<MessageModel>();
             //create a new lsit for this view
             Users = new ObservableCollection<UserModel>();
-            //local username
-            Username = "Patrick";
+
             userNameColor = "#000000";
 
             //populate the user list with a random number of users

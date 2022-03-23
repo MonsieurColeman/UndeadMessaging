@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColemanServerP2P
+namespace ColemanPeerToPeer.Service
 {
-    public struct MessageProtocol
+    public class MessageProtocol
     {
         public string sourceEndpoint;
         public MessageType messageProtocolType;
@@ -23,16 +23,14 @@ namespace ColemanServerP2P
         receiveCurrentTopicsOnJoin,
 
         //dash related
-        userJoined,
-        userLeft,
+        userJoined, 
+        userLeft, 
         topicCreate,
-        topicLeave,
+        topicEnded,
 
         //personal
         privateMessage,
         topicMsg,
         leaveTopic,
     }
-    
-
 }

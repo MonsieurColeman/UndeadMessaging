@@ -78,6 +78,7 @@
     </ApplicationDefinition>
     <Compile Include="Service\Converter.cs" />
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
+    <Compile Include="Service\RequestHandler.cs" />
     <Compile Include="Service\ServiceHandler.cs" />
     <Compile Include="Service\IPeer.cs" />
     <Compile Include="Service\MessageProtocol.cs" />

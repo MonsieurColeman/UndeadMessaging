@@ -34,16 +34,16 @@ namespace ColemanPeerToPeer
         {
             if (String.IsNullOrWhiteSpace(userColorTextbox.Text) || String.IsNullOrWhiteSpace(usernameTextbox.Text))
                 return;
-            PerformLogin(usernameTextbox.Text);
+            //PerformLogin(usernameTextbox.Text, userColorTextbox.Text);
             ViewManager.GetMainViewModelInstance().Username = usernameTextbox.Text; //doesnt work
             _MainWindow.loginSuccessful = true;
             this.Close();
         }
 
 
-        private void PerformLogin(string username)
+        private void PerformLogin(string username, string usernameColor)
         {
-            peer.JoinServer(username);
+            peer.JoinServer(username, usernameColor);
         }
 
         private MessageProtocol GetJoinMessage()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ColemanPeerToPeer.MVVM.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows;
 
 namespace ColemanPeerToPeer.Service
@@ -37,15 +39,30 @@ namespace ColemanPeerToPeer.Service
             string code = ServiceHandler.AttemptService(fnc);
         }
 
-        public bool JoinServer(string username)
+        public bool JoinServer(string username, string usernameColor, string myEndpoint = "me", string imageSource = "")
         {
+            UserModel userProfile = new UserModel()
+            {
+                Username = username,
+                ImageSource = imageSource,
+                UsernameColor = usernameColor,
+                Endpoint = myEndpoint,
+            };
+
+            string s = new JavaScriptSerializer().Serialize(userProfile);
+            s = "a";
+
             MessageProtocol msg = new MessageProtocol()
             {
-                sourceEndpoint = "me",
+                sourceEndpoint = myEndpoint,
                 messageBody = username,
-                messageProtocolType = MessageType.join,
+                //messageFiller = s,
+                messageProtocolType = MessageType.userLeft,
                 destinationEndpoint = "Server"
             };
+
+            //UserModel userProfile2 = new JavaScriptSerializer().Deserialize<UserModel>(msg.messageFiller);
+
             if (svc != null)
                 return svc.Join(msg);
             return false;

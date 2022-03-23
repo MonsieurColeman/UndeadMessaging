@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace ColemanServerP2P
 {
@@ -36,19 +37,43 @@ namespace ColemanServerP2P
         /*
          * Interface for clients to immediately know if they can join
          */
-        public bool Join(MessageProtocol msg)
+        public bool Join(MessageProtocol Specialmsg)
         {
-            if(msg.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(msg.messageBody))
-            {
-                Host._IncomingQueue.enQ(msg);
-                return true;
-            }
-            return false;
+            Console.WriteLine($"Here's what I got: {0}",Specialmsg.sourceEndpoint);
+
+            if (!(Specialmsg.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(Specialmsg.messageBody)))
+                return false;
+
+            Host._IncomingQueue.enQ(Specialmsg);
+            return true;
+        }
+
+        public void test()
+        {
+
         }
 
         public MessageProtocol GetMSG()
         {
             return Host._IncomingQueue.deQ();
+        }
+
+        public void SendComplicatedMsg(string msg)
+        {
+            MessageProtocol convertedMsg = new JavaScriptSerializer().Deserialize<MessageProtocol>(msg);
+            Host._IncomingQueue.enQ(convertedMsg);
+        }
+
+        public bool JoinComplicated(string m)
+        {
+            MessageProtocol msg = new JavaScriptSerializer().Deserialize<MessageProtocol>(m);
+
+            if (msg.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(msg.messageBody))
+            {
+                Host._IncomingQueue.enQ(msg);
+                return true;
+            }
+            return false;
         }
     }
 }

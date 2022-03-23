@@ -17,6 +17,7 @@ namespace ColemanPeerToPeer
     {
         private static MainWindow _mainWindow;
         private static MainViewModel _mainViewModel;
+        private static string _username;
 
         public static MainWindow GetMainWindowInstance()
         {
@@ -36,6 +37,16 @@ namespace ColemanPeerToPeer
         public static void SetMainViewModelInstance(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
+        }
+
+        public static void SetUsername(string s)
+        {
+            _username = s;
+        }
+
+        public static string GetUsername()
+        {
+            return _username;
         }
     }
 }

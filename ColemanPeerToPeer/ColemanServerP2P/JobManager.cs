@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace ColemanServerP2P
 {
@@ -34,10 +36,26 @@ namespace ColemanServerP2P
             }
         }
 
-        private static void UserJoined(MessageProtocol job)
+        private static void UserJoined(MessageProtocol Specialmsg)
         {
+            if (Specialmsg.messageFiller == null)
+                Console.WriteLine("dont know what's going on");
+
+            UserModel user = new JavaScriptSerializer().Deserialize<UserModel>(Specialmsg.messageFiller);
+
+            MessageProtocol job = new MessageProtocol()
+            {
+                sourceEndpoint = Specialmsg.sourceEndpoint,
+                messageBody = Specialmsg.messageBody,
+                messageFiller = user,
+                messageProtocolType = Specialmsg.messageProtocolType,
+                destinationEndpoint = Specialmsg.destinationEndpoint,
+            };
+
+
+
             //Return a list of users
-            Dictionary<string, string> users = (UserList.GetNumberOfUsers() != 0) ? UserList.GetCurrentUsers() : new Dictionary<string, string>();
+            ObservableCollection<UserModel> users = (UserList.GetNumberOfUsers() != 0) ? UserList.GetCurrentUsers() : new ObservableCollection<UserModel>();
             Host._OutboundQueue.enQ(new MessageProtocol
             {
                 sourceEndpoint = "Server",
@@ -58,6 +76,9 @@ namespace ColemanServerP2P
 
             //send everyone else in the userlist the user's endpoint
             //TODO
+
+            //Add User To UserList
+            UserList.AddUser(job.messageBody);
         }
 
         private static void UserLeft(MessageProtocol job)
@@ -65,6 +86,8 @@ namespace ColemanServerP2P
             //send users a message that person has left
 
             //remove person from userlist
+
+            //remove person from topic list
         }
 
         private static void TopicWasCreated(MessageProtocol job)

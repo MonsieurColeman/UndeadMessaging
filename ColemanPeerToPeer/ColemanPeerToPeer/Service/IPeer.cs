@@ -19,5 +19,11 @@ namespace ColemanPeerToPeer.Service
 
         [OperationContract]
         bool Join(MessageProtocol msg);
+
+        [OperationContract]
+        void SendComplicatedMsg(string msg);
+
+        [OperationContract]
+        bool JoinComplicated(string m);
     }
 }

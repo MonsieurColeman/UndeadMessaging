@@ -45,10 +45,12 @@
                HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
         <TextBox Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="7" Name="userColorTextbox"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-               HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
+               HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+                 Text="Blue"/>
         <TextBox Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="5" Name="usernameTextbox"
              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-               HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
+               HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+                 Text="Patrick C"/>
         <Button Grid.Row="11" Grid.Column="3" Grid.ColumnSpan="2" Content="Login" Click="Btn_Login"/>
 
     </Grid>
