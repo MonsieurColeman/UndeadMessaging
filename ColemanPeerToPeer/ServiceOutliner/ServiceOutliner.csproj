@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Converter.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="IPeer.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="MessageModel.cs" />
     <Compile Include="MessageProtocol.cs" />

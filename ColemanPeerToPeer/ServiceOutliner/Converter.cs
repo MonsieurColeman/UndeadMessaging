@@ -24,5 +24,6 @@ namespace ServiceOutliner
             var deserializedResult = serializer.Deserialize<MessageProtocol>(JSON);
             return deserializedResult;
         }
+
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -11,6 +12,15 @@ namespace ColemanServerP2P
 {
     public static class JobManager
     {
+        public static IPeer _PeerService;
+
+        public static void EstablishConnectionWithUser(string endpoint)
+        {
+            WSHttpBinding binding = new WSHttpBinding();
+            EndpointAddress address = new EndpointAddress(endpoint);
+            ChannelFactory<IPeer> factory = new ChannelFactory<IPeer>(binding, address);
+            _PeerService = factory.CreateChannel(); //returns an object of that service  
+        }
 
         public static void ProcessJobRequeust(MessageProtocol job)
         {
@@ -37,43 +47,27 @@ namespace ColemanServerP2P
             }
         }
 
-        private static void UserJoined(MessageProtocol Specialmsg)
+        private static void UserJoined(MessageProtocol job)
         {
-            if (Specialmsg.messageFiller == null)
-                Console.WriteLine("dont know what's going on");
-
-            UserModel user = new JavaScriptSerializer().Deserialize<UserModel>(Specialmsg.messageFiller);
-
-            MessageProtocol job = new MessageProtocol()
-            {
-                sourceEndpoint = Specialmsg.sourceEndpoint,
-                messageBody = Specialmsg.messageBody,
-                messageFiller = user,
-                messageProtocolType = Specialmsg.messageProtocolType,
-                destinationEndpoint = Specialmsg.destinationEndpoint,
-            };
-
-
+            //Connect with user who sent job
+            EstablishConnectionWithUser(job.sourceEndpoint);
 
             //Return a list of users
             ObservableCollection<UserModel> users = (UserList.GetNumberOfUsers() != 0) ? UserList.GetCurrentUsers() : new ObservableCollection<UserModel>();
-            Host._OutboundQueue.enQ(new MessageProtocol
-            {
-                sourceEndpoint = "Server",
-                messageProtocolType = MessageType.receiveCurrentUsersOnJoin,
-                messageBody = users,
-                destinationEndpoint = job.sourceEndpoint
-            });
+            _PeerService.GetListOfUsers(users);
 
             //send user list of topics
+            /*
             List<string> topics = (TopicList.GetNumberOfTopics() != 0) ? TopicList.GetCurrentTopics() : new List<string>();
-            Host._OutboundQueue.enQ(new MessageProtocol
+            response = new MessageProtocol
             {
                 sourceEndpoint = "Server",
                 messageProtocolType = MessageType.receiveCurrentUsersOnJoin,
                 messageBody = topics,
                 destinationEndpoint = job.sourceEndpoint
-            });
+            };
+            */
+            //_PeerService.SendMSG(response);
 
             //send everyone else in the userlist the user's endpoint
             //TODO

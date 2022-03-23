@@ -38,7 +38,6 @@ namespace ColemanServerP2P
 
         public static bool UniqueUserCheck(string username)
         {
-            Console.WriteLine("before add: "+ _list_of_users.Count.ToString());
             if (_list_of_users.Count > 0)
                 return !(_list_of_users.ContainsKey(username));
             else

@@ -22,8 +22,8 @@ namespace ColemanPeerToPeer
     public partial class LoginView : Window
     {
         MainWindow _MainWindow;
-        static string url = "http://localhost:8080/BasicService";
-        Peer peer = new Peer(url);
+        public static string url = "http://localhost:8080/BasicService";
+        Peer peer = new Peer();
 
         public LoginView(MainWindow main)
         {

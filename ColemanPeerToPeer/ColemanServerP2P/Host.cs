@@ -43,7 +43,7 @@ namespace ColemanServerP2P
             while (true)
             {
                 job = _IncomingQueue.deQ();
-                DoSomething(job);
+                JobManager.ProcessJobRequeust(job);
             }
         }
 

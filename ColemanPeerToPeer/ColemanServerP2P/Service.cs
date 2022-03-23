@@ -88,6 +88,16 @@ namespace ColemanServerP2P
             Host._IncomingQueue.enQ(m);
             return true;
         }
+
+        public bool JoinBetter(MessageProtocol m, UserModel userProfile)
+        {
+            if (!(m.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(m.messageBody)))
+                return false;
+
+            m.messageFiller = userProfile;
+            Host._IncomingQueue.enQ(m);
+            return true;
+        }
     }
 }
 

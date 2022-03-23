@@ -22,6 +22,9 @@ namespace ServiceOutliner
         bool Join(MessageProtocol msg);
 
         [OperationContract]
+        bool JoinBetter(MessageProtocol msg, UserModel userProfile);
+
+        [OperationContract]
         void SendComplicatedMsg(string msg);
 
         [OperationContract]
