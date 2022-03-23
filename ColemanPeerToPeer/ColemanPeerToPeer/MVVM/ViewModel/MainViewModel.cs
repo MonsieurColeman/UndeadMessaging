@@ -132,8 +132,10 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             else
                 SelectedChat.Messages.Add(newMsg);
 
-            //SelectedChat.Messages.Last();
-            string s = SelectedChat.LastMessage;
+            SelectedChat = SelectedChat;
+            SelectedChat.LastMessage = SelectedChat.LastMessage; //just calling it updates user card
+            //int truncatedNum = (Message.Count() < 30) ? Message.Count() : 30;
+            //SelectedChat.LastMessage = "You: " + Message.Substring(0, truncatedNum);
         }
 
         public void SetUsers(ObservableCollection<UserModel> U)
@@ -254,12 +256,18 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 
                     //Add Message
                     if (Users[i].Messages != null)
+                    {
                         Users[i].Messages.Add(newMsg);
+
+                    }
                     else
                     {
                         Users[i].Messages = new ObservableCollection<MessageModel>() { newMsg };
-                        //Users[i].Messages.Add(newMsg);
+
                     }
+                    int truncatedNum = (msg.Count() < 30) ? msg.Count() : 30;
+                    //Users[i].LastMessage = "You: " + msg.Substring(0, truncatedNum);
+                    Users[i].LastMessage = ""; //just setting it updates card
                 }
             }
         }
