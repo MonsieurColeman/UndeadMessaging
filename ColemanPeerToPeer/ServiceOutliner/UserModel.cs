@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServiceOutliner
 {
-    public class UserModel
+    public class UserModel 
     {
         public string Username { get; set; }
         public string ChatName { get; set; }
@@ -14,6 +14,14 @@ namespace ServiceOutliner
         public string UsernameColor { get; set; }
         public string Endpoint { get; set; }
         public ObservableCollection<MessageModel> Messages { get; set; }
-        public string LastMessage => (Messages != null) ? Messages.Last().Message : " ";
+        
+        private string _LastMessage;
+
+        public string LastMessage
+        {
+            get { return (Messages != null) ? Messages.Last().Message : "-"; }
+            set { _LastMessage = value;
+            }
+        }
     }
 }

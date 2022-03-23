@@ -51,6 +51,7 @@
     <Compile Include="IService.cs" />
     <Compile Include="MessageModel.cs" />
     <Compile Include="MessageProtocol.cs" />
+    <Compile Include="ObservableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserModel.cs" />
   </ItemGroup>

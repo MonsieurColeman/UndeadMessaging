@@ -96,8 +96,6 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 
             userNameColor = "#000000";
 
-            //populate the user list with a random number of users
-            int users = new Random().Next(0, 100);
 
             
             SendCommand = new RelayCommand(SendMessage);
@@ -133,6 +131,9 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 SelectedChat.Messages = new ObservableCollection<MessageModel> { newMsg };
             else
                 SelectedChat.Messages.Add(newMsg);
+
+            //SelectedChat.Messages.Last();
+            string s = SelectedChat.LastMessage;
         }
 
         public void SetUsers(ObservableCollection<UserModel> U)
@@ -203,6 +204,14 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             return false;
         }
 
+        private string GetUsernameFromEndpoint(string endPoint)
+        {
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i].Endpoint == endPoint)
+                    return Users[i].Username;
+            throw new NotImplementedException();
+        }
+
         private void RemoveUserFromUserList(UserModel user)
         {
             UserModel u;
@@ -222,10 +231,15 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 {
                     //safe way of checking for first msg without risking
                     //null exception
-                    firstMsg = false;
+                    //Only switch true to false if intending to implement
+                    //different display of messages when the last message is by the
+                    //same person sending a new message
+                    firstMsg = true;
                     if(Users[i].Messages != null)
                         if(Users[i].Messages.Count > 0)
-                            firstMsg = true;
+                            if(Users[i].Messages.Last().Username == GetUsernameFromEndpoint(endpoint))
+                                //firstMsg = false;
+                                firstMsg = true;
 
                     MessageModel newMsg = new MessageModel()
                     {
@@ -243,8 +257,8 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                         Users[i].Messages.Add(newMsg);
                     else
                     {
-                        Users[i].Messages = new ObservableCollection<MessageModel>() { new MessageModel { } };
-                        Users[i].Messages.Add(newMsg);
+                        Users[i].Messages = new ObservableCollection<MessageModel>() { newMsg };
+                        //Users[i].Messages.Add(newMsg);
                     }
                 }
             }
