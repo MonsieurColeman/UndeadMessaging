@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColemanPeerToPeer.Service
+//namespace ColemanPeerToPeer.Service
+namespace ServiceOutliner
 {
     public class MessageProtocol
     {

@@ -1,4 +1,5 @@
 ﻿using ColemanPeerToPeer.MVVM.ViewModel;
+using ServiceOutliner;
 using System;
 using System.Collections.Generic;
 using System.Linq;

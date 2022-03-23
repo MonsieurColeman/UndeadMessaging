@@ -1,4 +1,4 @@
-﻿using ColemanPeerToPeer.MVVM.Model;
+﻿using ServiceOutliner;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,4 +1,5 @@
 ﻿using ColemanPeerToPeer.Service;
+using ServiceOutliner;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace ColemanPeerToPeer
         {
             if (String.IsNullOrWhiteSpace(userColorTextbox.Text) || String.IsNullOrWhiteSpace(usernameTextbox.Text))
                 return;
-            //PerformLogin(usernameTextbox.Text, userColorTextbox.Text);
+            PerformLogin(usernameTextbox.Text, userColorTextbox.Text);
             ViewManager.GetMainViewModelInstance().Username = usernameTextbox.Text; //doesnt work
             _MainWindow.loginSuccessful = true;
             this.Close();

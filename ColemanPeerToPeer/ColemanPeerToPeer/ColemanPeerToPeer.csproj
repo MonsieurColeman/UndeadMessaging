@@ -76,12 +76,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Service\Converter.cs" />
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="Service\RequestHandler.cs" />
     <Compile Include="Service\ServiceHandler.cs" />
-    <Compile Include="Service\IPeer.cs" />
-    <Compile Include="Service\MessageProtocol.cs" />
     <Compile Include="Service\Peer.cs" />
     <Compile Include="TestScripts\UserMessageTester.cs" />
     <Compile Include="ViewManager.cs" />
@@ -121,8 +118,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MVVM\Model\MessageModel.cs" />
-    <Compile Include="MVVM\Model\UserModel.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -149,7 +144,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ServiceOutliner\ServiceOutliner.csproj">
+      <Project>{e41be361-8e41-44bb-94c8-836b5e67efd7}</Project>
+      <Name>ServiceOutliner</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\sendBtn.png" />
   </ItemGroup>
@@ -168,5 +168,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

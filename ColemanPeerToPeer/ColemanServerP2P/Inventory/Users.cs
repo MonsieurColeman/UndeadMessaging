@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServiceOutliner;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -43,27 +44,5 @@ namespace ColemanServerP2P
             else
                 return true;
         }
-    }
-
-    public class UserModel
-    {
-        public string Username { get; set; }
-        public string ChatName { get; set; }
-        public string ImageSource { get; set; }
-        public string UsernameColor { get; set; }
-        public string Endpoint { get; set; }
-        public ObservableCollection<MessageModel> Messages { get; set; }
-        public string LastMessage => (Messages != null) ? Messages.Last().Message : " ";
-    }
-
-    public class MessageModel
-    {
-        public string Username { get; set; }
-        public string UsernameColor { get; set; }
-        public string ImageSource { get; set; }
-        public string Message { get; set; }
-        public DateTime Time { get; set; }
-        public bool IsFromMe { get; set; }
-        public bool? FirstMessage { get; set; }
     }
 }

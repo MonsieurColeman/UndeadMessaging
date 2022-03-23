@@ -1,9 +1,8 @@
-﻿using ColemanPeerToPeer.Service;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Web.Script.Serialization;
 
-namespace ColemanPeerToPeer
+namespace ServiceOutliner
 {
     public static class Converter
     {

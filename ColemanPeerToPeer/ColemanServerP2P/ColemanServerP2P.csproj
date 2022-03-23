@@ -49,9 +49,7 @@
     <Compile Include="Host.cs" />
     <Compile Include="Inventory\Topics.cs" />
     <Compile Include="Inventory\Users.cs" />
-    <Compile Include="IService.cs" />
     <Compile Include="JobManager.cs" />
-    <Compile Include="MessageProtocol.cs" />
     <Compile Include="Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +59,11 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ServiceOutliner\ServiceOutliner.csproj">
+      <Project>{E41BE361-8E41-44BB-94C8-836B5E67EFD7}</Project>
+      <Name>ServiceOutliner</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

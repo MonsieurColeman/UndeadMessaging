@@ -1,10 +1,9 @@
 ﻿using System;
-
 using System.Windows;
 using ColemanPeerToPeer.MVVM.ViewModel;
-using ColemanPeerToPeer.MVVM.Model;
 using System.Windows.Input;
 using System.Collections.Specialized;
+using ServiceOutliner;
 
 namespace ColemanPeerToPeer
 {

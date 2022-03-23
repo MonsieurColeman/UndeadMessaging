@@ -1,6 +1,6 @@
 ﻿using ColemanPeerToPeer.Core;
-using ColemanPeerToPeer.MVVM.Model;
 using ColemanPeerToPeer.TestScripts;
+using ServiceOutliner;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
