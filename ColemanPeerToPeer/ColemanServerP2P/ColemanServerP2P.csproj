@@ -45,11 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockingQueue.cs" />
+    <Compile Include="ProcessingScripts\BlockingQueue.cs" />
     <Compile Include="Host.cs" />
     <Compile Include="Inventory\Topics.cs" />
     <Compile Include="Inventory\Users.cs" />
-    <Compile Include="JobManager.cs" />
+    <Compile Include="ProcessingScripts\JobManager.cs" />
     <Compile Include="Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -31,6 +31,59 @@ namespace ColemanPeerToPeer.Service
             svc = factory.CreateChannel(); //returns an object of that service           
         }
 
+        public void GetAnEndPoint()
+        {
+
+        }
+
+        void startListening()
+        {
+            int localPort = 4040;
+            while (true)
+            {
+                try
+                {
+                    string endpoint = "http://localhost:" + localPort + "/ICommunicator";
+                    CreateRecvChannel(endpoint);
+                    // create receive thread which calls rcvBlockingQ.deQ() (see ThreadProc above)
+
+
+                    OnListenerCreated.Invoke(endpoint);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    localPort++;
+                    if ((localPort - 4040) > 10000)
+                    {
+                        OnListenerCreated.Invoke("");
+                        return;
+                    }
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public void SendMessage(MessageProtocol msg)
         {
             // input string is captured in body of functor
@@ -39,8 +92,19 @@ namespace ColemanPeerToPeer.Service
             string code = ServiceHandler.AttemptService(fnc);
         }
 
+        /* 
+         * This function is responsible for setting up a connection relationship with the server
+         */
         public bool JoinServer(string username, string usernameColor, string myEndpoint = "me", string imageSource = "")
         {
+            //Perform Service Check
+            if (svc == null)
+            {
+                MessageBox.Show("Login Service Experienced an error");
+                return false;
+            }
+
+            //Create a usermodel to be passed to other clients
             UserModel userProfile = new UserModel()
             {
                 Username = username,
@@ -49,30 +113,23 @@ namespace ColemanPeerToPeer.Service
                 Endpoint = myEndpoint,
             };
 
-            string s = new JavaScriptSerializer().Serialize(userProfile);
-            s = "a";
-
+            //Create Protocol for service
             MessageProtocol msg = new MessageProtocol()
             {
                 sourceEndpoint = myEndpoint,
                 messageBody = username,
-                //messageFiller = s,
-                messageProtocolType = MessageType.userLeft,
+                messageFiller = new JavaScriptSerializer().Serialize(userProfile),
+                messageProtocolType = MessageType.join,
                 destinationEndpoint = "Server"
             };
 
-            //UserModel userProfile2 = new JavaScriptSerializer().Deserialize<UserModel>(msg.messageFiller);
-
-            if (svc != null)
-                return svc.Join(msg);
-            return false;
+            //Send Message To Server
+            return svc.Join(msg);
         }
 
         public string GetMessage()
         {
             MessageProtocol msg;
-            //Func<string> fnc = () => { msg = svc.GetMSG(); return "something something something"; };
-            //return ServiceRetryWrapper(fnc);
             return "";
         }
     }

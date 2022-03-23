@@ -33,18 +33,34 @@ namespace ColemanPeerToPeer
 
         private void Btn_Login(object sender, RoutedEventArgs e)
         {
+            //make sure textboxes have values
             if (String.IsNullOrWhiteSpace(userColorTextbox.Text) || String.IsNullOrWhiteSpace(usernameTextbox.Text))
                 return;
-            PerformLogin(usernameTextbox.Text, userColorTextbox.Text);
-            ViewManager.GetMainViewModelInstance().Username = usernameTextbox.Text; //doesnt work
+
+            //Make call to server
+            if (!PerformLogin(usernameTextbox.Text, userColorTextbox.Text))
+            {
+                NotifyUserNameWasTaken();
+                return;
+            }
+
+            //Set the Dashboard Username
+            ViewManager.GetMainViewModelInstance().Username = usernameTextbox.Text;
+
+            //Show Dashboard
             _MainWindow.loginSuccessful = true;
             this.Close();
         }
 
-
-        private void PerformLogin(string username, string usernameColor)
+        private void NotifyUserNameWasTaken()
         {
-            peer.JoinServer(username, usernameColor);
+            MessageBox.Show("That name is in use!");
+        }
+
+
+        private bool PerformLogin(string username, string usernameColor)
+        {
+            return peer.JoinServer(username, usernameColor);
         }
 
         private MessageProtocol GetJoinMessage()
@@ -62,30 +78,5 @@ namespace ColemanPeerToPeer
         {
             MessageBox.Show("oo");
         }
-
-        /*
-        static void Main(string[] args)
-        {
-            Console.Title = "BasicHttp Client";
-            Console.Write("\n  Starting Programmatic Basic Service Client");
-            Console.Write("\n ============================================\n");
-            string msg = args[0];
-            string url = "http://localhost:8080/BasicService";
-            Client client = new Client(url);
-
-
-            client.SendMessage(msg);
-            client.SendMessage(msg);
-            client.SendMessage(msg);
-            client.SendMessage(msg);
-            client.SendMessage(msg);
-            msg = client.GetMessage();
-            Console.Write("\n  Message recieved from Service: {0}\n\n", msg);
-
-            System.IO.FileInfo fileInfo =
-               new System.IO.FileInfo("./test.zip");
-
-        }
-        */
     }
 }

@@ -26,5 +26,8 @@ namespace ServiceOutliner
 
         [OperationContract]
         bool JoinComplicated(string m);
+
+        [OperationContract]
+        bool TestMessage(MessageProtocol m);
     }
 }

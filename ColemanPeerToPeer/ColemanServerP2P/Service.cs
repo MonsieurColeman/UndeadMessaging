@@ -38,20 +38,26 @@ namespace ColemanServerP2P
         /*
          * Interface for clients to immediately know if they can join
          */
-        public bool Join(MessageProtocol Specialmsg)
+        public bool Join(MessageProtocol m)
         {
-            Console.WriteLine($"Here's what I got: {0}",Specialmsg.sourceEndpoint);
-
-            if (!(Specialmsg.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(Specialmsg.messageBody)))
+            if (!(m.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(m.messageBody)))
                 return false;
 
-            Host._IncomingQueue.enQ(Specialmsg);
+            UserModel userModel = new JavaScriptSerializer().Deserialize<UserModel>(m.messageFiller);
+            MessageProtocol msg = new MessageProtocol()
+            {
+                sourceEndpoint = m.sourceEndpoint,
+                messageBody = m.messageBody,
+                messageFiller = userModel,
+                messageProtocolType = m.messageProtocolType
+                ,
+                destinationEndpoint = m.destinationEndpoint
+            };
+
+            Console.WriteLine(userModel.Username);
+
+            Host._IncomingQueue.enQ(msg);
             return true;
-        }
-
-        public void test()
-        {
-
         }
 
         public MessageProtocol GetMSG()
@@ -76,17 +82,12 @@ namespace ColemanServerP2P
             }
             return false;
         }
+
+        public bool TestMessage(MessageProtocol m)
+        {
+            Host._IncomingQueue.enQ(m);
+            return true;
+        }
     }
 }
 
-
-/*
-            new MessageProtocol
-            {
-                sourceEndpoint = "Server",
-                messageProtocolType = MessageType.receiveCurrentUsersOnJoin,
-                messageBody = "test",
-                destinationEndpoint = "unkown"
-            };
- 
- */

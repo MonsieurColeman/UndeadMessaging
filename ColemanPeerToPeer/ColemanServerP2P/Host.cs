@@ -36,7 +36,28 @@ namespace ColemanServerP2P
         {
             Console.WriteLine("I did something");
         }
-        
+
+        private static void WorkOnInboundQueue()
+        {
+            MessageProtocol job;
+            while (true)
+            {
+                job = _IncomingQueue.deQ();
+                DoSomething(job);
+            }
+        }
+
+        private static void WorkOnOutboundQueue()
+        {
+            MessageProtocol job;
+            while (true)
+            {
+                //fix
+                job = _OutboundQueue.deQ();
+                DoSomething(job);
+            }
+        }
+
         static void Main(string[] args)
         {
             Console.Title = "WSHttpBinding Service Host";
@@ -53,16 +74,10 @@ namespace ColemanServerP2P
                 Console.Write("\n  The service is running - Press key to exit:\n");
                 
                 //Start thread to accept requests
-                Thread t = new Thread(() =>
-                {
-                    MessageProtocol job;
-                    while (true)
-                    {
-                        job = _IncomingQueue.deQ();
-                        DoSomething(job);
-                    }
-                });
-                t.Start();
+                Thread InboundThread = new Thread(WorkOnInboundQueue);
+                Thread OutboundThread = new Thread(WorkOnOutboundQueue);
+                InboundThread.Start();
+                //OutboundThread.Start();
 
                 //Block to allow console to stay up
                 Console.ReadKey();
