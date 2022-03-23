@@ -50,7 +50,7 @@ namespace ColemanPeerToPeer.Service
 
         public void SendMSG(MessageProtocol msg)
         {
-            throw new NotImplementedException();
+            Client._IncomingQueue.enQ(msg);
         }
 
         public MessageProtocol GetMSG()
@@ -74,6 +74,16 @@ namespace ColemanPeerToPeer.Service
             {
                 messageFiller = newUser,
                 messageProtocolType = MessageType.userJoined
+            };
+            Client._IncomingQueue.enQ(msg);
+        }
+
+        public void UserLeft(UserModel user)
+        {
+            MessageProtocol msg = new MessageProtocol()
+            {
+                messageFiller = user,
+                messageProtocolType = MessageType.userLeft
             };
             Client._IncomingQueue.enQ(msg);
         }

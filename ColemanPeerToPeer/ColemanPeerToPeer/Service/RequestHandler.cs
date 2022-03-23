@@ -67,12 +67,12 @@ namespace ColemanPeerToPeer.Service
 
         private static void RemoveUserFromDashboard(MessageProtocol dashMsg)
         {
-            //toDo
+            _Dashboard.RemoveUser(dashMsg.messageFiller);
         }
 
         private static void AddMessageToDashboard(MessageProtocol dashMsg)
         {
-            //toDo
+            _Dashboard.AddPrivateMessageToChat(dashMsg);
         }
     }
 }

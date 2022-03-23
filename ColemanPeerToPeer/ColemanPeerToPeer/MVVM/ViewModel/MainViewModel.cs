@@ -1,4 +1,5 @@
 ﻿using ColemanPeerToPeer.Core;
+using ColemanPeerToPeer.Service;
 using ColemanPeerToPeer.TestScripts;
 using ServiceOutliner;
 using System;
@@ -15,7 +16,18 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
     public class MainViewModel : ObservableObject
     {
         //current view messages
-        public  ObservableCollection<MessageModel> Messages { get; set; }
+        //public  ObservableCollection<MessageModel> Messages2 { get; set; }
+
+        private ObservableCollection<MessageModel> _Messages;
+
+        public ObservableCollection<MessageModel> Messages
+        {
+            get { return _Messages; }
+            set { _Messages = value;
+                OnPropertyChanged();
+            }
+        }
+
         //current view users
 
         private ObservableCollection<UserModel> _users;
@@ -90,26 +102,23 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             
             SendCommand = new RelayCommand(SendMessage);
             
-            
-            
-            //Test objects
-            //SetUsers(UserMessageTester.GetUsers());
-            //GainUser(UserMessageTester.GetExampleTopic());
-
         }
 
         public void SendMessage(object o)
         {
             if (SelectedChat == null || String.IsNullOrWhiteSpace(Message))
                 return;
-            DisplayMessageToView();
+
+            //Displays message to my view only if, receipient got message
+            if(DisplayMessageToTargetPeer(SelectedChat, Message))
+                DisplayMessageToView();
 
             Message = ""; //Clears textbox
         }
 
         private void DisplayMessageToView()
         {
-            SelectedChat.Messages.Add(new MessageModel
+            MessageModel newMsg = new MessageModel
             {
                 Username = Username,
                 UsernameColor = userNameColor,
@@ -118,7 +127,12 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 Time = DateTime.Now,
                 IsFromMe = true,
                 FirstMessage = true
-            });
+            };
+
+            if (SelectedChat.Messages == null)
+                SelectedChat.Messages = new ObservableCollection<MessageModel> { newMsg };
+            else
+                SelectedChat.Messages.Add(newMsg);
         }
 
         public void SetUsers(ObservableCollection<UserModel> U)
@@ -135,16 +149,110 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 Users.Add(U);
         }
 
+        public void RemoveUser(UserModel user)
+        {
+            if (Users == null)
+                return;
+
+            if (!UserListContainsUser(user))
+                return;
+
+            RemoveUserFromUserList(user);
+        }
+
         public void AddMessageToChat(MessageModel message)
         {
             if(_selectedChat!= null)
                 _selectedChat.Messages.Add(message);
         }
 
+        public void AddPrivateMessageToChat(MessageProtocol newMsq)
+        {
+            //if we receive a message from someone not in our user list,
+            //do nothing
+            if (!UserListContainsUser(newMsq.sourceEndpoint))
+                return;
+
+            AddMessageByEndpoint(newMsq.sourceEndpoint, newMsq.messageBody);
+        }
+
         private UserModel AddDemoAttributesToUserMode(UserModel u)
         {
             u.ImageSource = "https://picsum.photos/200/300";
             return u;
+        }
+
+        public void ShutdownChat()
+        {
+            Client.ShutdownChat(Users);
+        }
+
+        private bool UserListContainsUser(UserModel user)
+        {
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i].Endpoint == user.Endpoint)
+                    return true;
+            return false;
+        }
+
+        private bool UserListContainsUser(string endPoint)
+        {
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i].Endpoint == endPoint)
+                    return true;
+            return false;
+        }
+
+        private void RemoveUserFromUserList(UserModel user)
+        {
+            UserModel u;
+            for (int i = 0; i < Users.Count; i++)
+            {
+                if (Users[i].Endpoint == user.Endpoint)
+                    Users.RemoveAt(i);
+            }
+        }
+
+        private void AddMessageByEndpoint(string endpoint, string msg)
+        {
+            bool firstMsg;
+            for (int i = 0; i < Users.Count; i++)
+            {
+                if (Users[i].Endpoint == endpoint)
+                {
+                    //safe way of checking for first msg without risking
+                    //null exception
+                    firstMsg = false;
+                    if(Users[i].Messages != null)
+                        if(Users[i].Messages.Count > 0)
+                            firstMsg = true;
+
+                    MessageModel newMsg = new MessageModel()
+                    {
+                        Username = Users[i].Username,
+                        UsernameColor = Users[i].UsernameColor,
+                        ImageSource = Users[i].ImageSource,
+                        Message = msg,
+                        Time = DateTime.Now,
+                        IsFromMe = false,
+                        FirstMessage = firstMsg
+                    };
+
+                    //Add Message
+                    if (Users[i].Messages != null)
+                        Users[i].Messages.Add(newMsg);
+                    else
+                    {
+                        Users[i].Messages = new ObservableCollection<MessageModel>() { new MessageModel { } };
+                        Users[i].Messages.Add(newMsg);
+                    }
+                }
+            }
+        }
+
+        private bool DisplayMessageToTargetPeer(UserModel user, string message)
+        {
+            return Client.SendPrivateMessage(user, message);
         }
     }
 }

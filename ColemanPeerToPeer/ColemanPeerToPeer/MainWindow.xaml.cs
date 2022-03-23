@@ -68,6 +68,8 @@ namespace ColemanPeerToPeer
         #region Window Ease of Use Functions
         private void Btn_Close_Click(object sender, RoutedEventArgs e)
         {
+            ViewModelCheck();
+            _viewModel.ShutdownChat();
             Application.Current.Shutdown();
         }
 

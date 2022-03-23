@@ -87,11 +87,10 @@ namespace ColemanServerP2P
 
         private static void UserLeft(MessageProtocol job)
         {
-            //send users a message that person has left
-
             //remove person from userlist
+            UserList.RemoveUser(job.messageFiller);
 
-            //remove person from topic list
+            //remove person from topic list || todo
         }
 
         private static void TopicWasCreated(MessageProtocol job)

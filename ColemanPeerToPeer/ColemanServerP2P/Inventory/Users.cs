@@ -18,6 +18,11 @@ namespace ColemanServerP2P
             _list_of_users.Add(user.Username, user);
         }
 
+        public static void RemoveUser(UserModel user)
+        {
+            _list_of_users.Remove(user.Username);
+        }
+
         public static string GetEndpoint(string username)
         {
             return _list_of_users[username].Endpoint;

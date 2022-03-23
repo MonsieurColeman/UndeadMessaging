@@ -1,6 +1,7 @@
 ﻿using ServiceOutliner;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -8,25 +9,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace ColemanPeerToPeer.Service
 {
-    public class Client
+    public static class Client
     {
 
         public static IBasicService serverService;
+        public static IPeer _PeerService;
         public static ServiceHost hostingService = null;
         public static BlockingQueue<MessageProtocol> _IncomingQueue = new BlockingQueue<MessageProtocol>();
-        string _myEndpoint = ""; //gets set by ctor functions
-        string _serverEndpoint = ""; //gets set by ctor functions
+        static string _myEndpoint = ""; //gets set by ctor functions
+        static string _serverEndpoint = ""; //gets set by ctor functions
+        static UserModel myUserModel = null;
 
-        public Client()
+        public static void StartClientBehavior()
         {
             EstablishConnectionWithServer(LoginView._url);
             HostARecieveChannel();
         }
 
-        public void EstablishConnectionWithServer(string serverEndPoint)
+        public static void EstablishConnectionWithServer(string serverEndPoint)
         {
             _serverEndpoint = serverEndPoint; //set class varible
             WSHttpBinding binding = new WSHttpBinding();
@@ -35,7 +39,7 @@ namespace ColemanPeerToPeer.Service
             serverService = factory.CreateChannel(); //returns an object of that service  
         }
 
-        public void HostARecieveChannel()
+        public static void HostARecieveChannel()
         {
             StartListening(); //create channel and set endpoint
 
@@ -45,17 +49,17 @@ namespace ColemanPeerToPeer.Service
             rvcThread.Start();
         }
 
-        private void ReceiveThreadProc()
+        private static void ReceiveThreadProc()
         {
             MessageProtocol job;
             while (true)
             {
                 job = _IncomingQueue.deQ();
-                RequestHandler.ProcessJobRequeust(job);
+                Application.Current.Dispatcher.Invoke(() => RequestHandler.ProcessJobRequeust(job));
             }
         }
 
-        private void CreateRecvChannel(string address)
+        private static void CreateRecvChannel(string address)
         {
             WSHttpBinding binding = new WSHttpBinding();
             Uri baseAddress = new Uri(address);
@@ -64,7 +68,7 @@ namespace ColemanPeerToPeer.Service
             hostingService.Open();
         }
 
-        void StartListening()
+        static void StartListening()
         {
             int localPort = 4040;
             while (true)
@@ -93,10 +97,10 @@ namespace ColemanPeerToPeer.Service
         /* 
  * This function is responsible for setting up a connection relationship with the server
  */
-        public bool JoinServer(string username, string usernameColor, string imageSource = "")
+        public static bool JoinServer(string username, string usernameColor, string imageSource = "")
         {
             //Get endpoint from instance variable
-            string myEndpoint = this._myEndpoint;
+            string myEndpoint = _myEndpoint;
 
             //Perform Service Check
             if (serverService == null)
@@ -106,13 +110,7 @@ namespace ColemanPeerToPeer.Service
             }
 
             //Create a usermodel to be passed to other clients
-            UserModel userProfile = new UserModel()
-            {
-                Username = username,
-                ImageSource = imageSource,
-                UsernameColor = usernameColor,
-                Endpoint = myEndpoint,
-            };
+            UserModel userProfile = SetMyUserModel(username, usernameColor, imageSource);
 
             //Create Protocol for service
             MessageProtocol msg = new MessageProtocol()
@@ -128,5 +126,62 @@ namespace ColemanPeerToPeer.Service
             return serverService.Join(msg);
         }
 
+        public static void EstablishConnectionWithUser(string endpoint)
+        {
+            WSHttpBinding binding = new WSHttpBinding();
+            EndpointAddress address = new EndpointAddress(endpoint);
+            ChannelFactory<IPeer> factory = new ChannelFactory<IPeer>(binding, address);
+            _PeerService = factory.CreateChannel(); //returns an object of that service  
+        }
+
+        public static bool SendPrivateMessage(UserModel user, string message)
+        {
+            EstablishConnectionWithUser(user.Endpoint);
+            try
+            {
+                _PeerService.SendMSG(new MessageProtocol()
+                {
+                    sourceEndpoint = _myEndpoint,
+                    messageBody = message,
+                    messageProtocolType = MessageType.privateMessage,
+                    destinationEndpoint = user.Endpoint
+                });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public static void ShutdownChat(ObservableCollection<UserModel> Userlist)
+        {
+            UserModel user;
+            for (int i = 0; i < Userlist.Count; i++)
+            {
+                user = Userlist[i];
+                EstablishConnectionWithUser(user.Endpoint);
+                _PeerService.UserLeft(myUserModel);
+            }
+            serverService.Leave(new MessageProtocol()
+            {
+                sourceEndpoint = _myEndpoint,
+                messageProtocolType = MessageType.userLeft,
+                destinationEndpoint = _serverEndpoint
+            }, myUserModel);
+        }
+
+        public static UserModel SetMyUserModel(string username, string usernameColor, string imageSource = "")
+        {
+            UserModel userProfile = new UserModel()
+            {
+                Username = username,
+                ImageSource = imageSource,
+                UsernameColor = usernameColor,
+                Endpoint = _myEndpoint,
+            };
+            myUserModel = userProfile;
+            return userProfile;
+        }
     }
 }

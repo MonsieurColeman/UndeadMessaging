@@ -27,6 +27,10 @@ namespace ServiceOutliner
         void GetNewUser(UserModel newUser);
 
         [OperationContract]
+        void UserLeft(UserModel newUser);
+
+
+        [OperationContract]
         MessageProtocol GetMSG();
     }
 

@@ -98,6 +98,12 @@ namespace ColemanServerP2P
             Host._IncomingQueue.enQ(m);
             return true;
         }
+
+        public void Leave(MessageProtocol msg, UserModel userProfile)
+        {
+            msg.messageFiller = userProfile;
+            Host._IncomingQueue.enQ(msg);
+        }
     }
 }
 
