@@ -22,8 +22,8 @@ namespace ColemanPeerToPeer
     public partial class LoginView : Window
     {
         MainWindow _MainWindow;
-        public static string url = "http://localhost:8080/BasicService";
-        Peer peer = new Peer();
+        public static string _url = "http://localhost:8080/BasicService";
+        Client _clientBehavior = new Client();
 
         public LoginView(MainWindow main)
         {
@@ -60,14 +60,14 @@ namespace ColemanPeerToPeer
 
         private bool PerformLogin(string username, string usernameColor)
         {
-            return peer.JoinServer(username, usernameColor);
+            return _clientBehavior.JoinServer(username, usernameColor);
         }
 
         private MessageProtocol GetJoinMessage()
         {
             return new MessageProtocol()
             {
-                sourceEndpoint = url,
+                sourceEndpoint = _url,
                 messageProtocolType = MessageType.join,
                 messageBody = "thisIsATest",
                 destinationEndpoint = "server"

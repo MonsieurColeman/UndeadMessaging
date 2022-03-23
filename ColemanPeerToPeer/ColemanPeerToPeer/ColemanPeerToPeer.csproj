@@ -78,6 +78,7 @@
     </ApplicationDefinition>
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="Service\BlockingQueue.cs" />
+    <Compile Include="Service\Client.cs" />
     <Compile Include="Service\RequestHandler.cs" />
     <Compile Include="Service\ServiceHandler.cs" />
     <Compile Include="Service\Peer.cs" />

@@ -49,6 +49,9 @@ namespace ColemanServerP2P
 
         private static void UserJoined(MessageProtocol job)
         {
+            //To Clear Confusion
+            UserModel newUser = job.messageFiller;
+
             //Connect with user who sent job
             EstablishConnectionWithUser(job.sourceEndpoint);
 
@@ -70,10 +73,16 @@ namespace ColemanServerP2P
             //_PeerService.SendMSG(response);
 
             //send everyone else in the userlist the user's endpoint
-            //TODO
+            for(int i = 0; i < users.Count; i++)
+            {
+                UserModel a = users[i];
+                EstablishConnectionWithUser(a.Endpoint);
+                _PeerService.GetNewUser(newUser);
+                Console.WriteLine("this happened");
+            }
 
             //Add User To UserList
-            UserList.AddUser(job.messageBody);
+            UserList.AddUser(newUser);
         }
 
         private static void UserLeft(MessageProtocol job)

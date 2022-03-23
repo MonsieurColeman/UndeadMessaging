@@ -17,7 +17,18 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         //current view messages
         public  ObservableCollection<MessageModel> Messages { get; set; }
         //current view users
-        public ObservableCollection<UserModel> Users { get; set; }
+
+        private ObservableCollection<UserModel> _users;
+
+        public ObservableCollection<UserModel> Users
+        {
+            get { return _users; }
+            set { _users = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<UserModel> Users2 { get; set; }
         //stuff
         private string _message;
         //otherstuff
@@ -82,8 +93,8 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             
             
             //Test objects
-            SetUsers(UserMessageTester.GetUsers());
-            GainUser(UserMessageTester.GetExampleTopic());
+            //SetUsers(UserMessageTester.GetUsers());
+            //GainUser(UserMessageTester.GetExampleTopic());
 
         }
 
@@ -117,7 +128,11 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 
         public void GainUser(UserModel U)
         {
-            Users.Add(U);
+            U = AddDemoAttributesToUserMode(U);
+            if (Users == null)
+                Users = new ObservableCollection<UserModel>(){U};
+            else
+                Users.Add(U);
         }
 
         public void AddMessageToChat(MessageModel message)
@@ -125,8 +140,15 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             if(_selectedChat!= null)
                 _selectedChat.Messages.Add(message);
         }
+
+        private UserModel AddDemoAttributesToUserMode(UserModel u)
+        {
+            u.ImageSource = "https://picsum.photos/200/300";
+            return u;
+        }
     }
 }
+
 
 /*
  To add a chat to the view,

@@ -45,22 +45,24 @@ namespace ColemanPeerToPeer.Service
         {
             if (_Dashboard == null)
                 _Dashboard = ViewManager.GetMainViewModelInstance();
-            _Dashboard.SetUsers(setupMsg.messageBody);
+            _Dashboard.SetUsers(setupMsg.messageFiller);
         }
 
         private static void SetupTopicForDashboard(MessageProtocol setupMsg)
         {
+            if (_Dashboard == null)
+                _Dashboard = ViewManager.GetMainViewModelInstance();
             //toDo
         }
 
         private static void AddTopicToDashboard(MessageProtocol dashMsg)
         {
-            //toDo
+            //ToDO
         }
 
         private static void AddUserToDashboard(MessageProtocol dashMsg)
         {
-            //toDo
+            _Dashboard.GainUser(dashMsg.messageFiller);
         }
 
         private static void RemoveUserFromDashboard(MessageProtocol dashMsg)
