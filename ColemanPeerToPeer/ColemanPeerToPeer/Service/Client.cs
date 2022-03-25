@@ -20,9 +20,9 @@ namespace ColemanPeerToPeer.Service
         public static IPeer _PeerService;
         public static ServiceHost hostingService = null;
         public static BlockingQueue<MessageProtocol> _IncomingQueue = new BlockingQueue<MessageProtocol>();
-        static string _myEndpoint = ""; //gets set by ctor functions
+        private static string _myEndpoint = ""; //gets set by ctor functions
         static string _serverEndpoint = ""; //gets set by ctor functions
-        static UserModel myUserModel = null;
+        private static UserModel myUserModel = null;
 
         public static void StartClientBehavior()
         {
@@ -154,6 +154,41 @@ namespace ColemanPeerToPeer.Service
             }
         }
 
+        public static bool SendMessageToTopic(TopicModel topic, MessageModel msg)
+        {
+            /*
+            try
+            {*/
+                serverService.MsgTopic(new MessageProtocol()
+                {
+                    sourceEndpoint = _myEndpoint,
+                    messageProtocolType = MessageType.topicMsg,
+                    destinationEndpoint = _serverEndpoint
+                },
+                msg, topic);
+                return true; /*
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }*/
+        }
+
+        public static bool CreateTopic(string topicName)
+        {
+            return serverService.CreateTopic(new MessageProtocol()
+            {
+                sourceEndpoint= _myEndpoint,
+                messageProtocolType= MessageType.topicCreate,
+                destinationEndpoint = _serverEndpoint
+            },
+            new TopicModel()
+            {
+                ChatName = topicName,
+                Username = "placeholder"
+            });
+        }
+
         public static void ShutdownChat(ObservableCollection<UserModel> Userlist)
         {
             UserModel user;
@@ -182,6 +217,16 @@ namespace ColemanPeerToPeer.Service
             };
             myUserModel = userProfile;
             return userProfile;
+        }
+
+        public static UserModel GetMyUserModel()
+        {
+            return myUserModel;
+        }
+
+        public static string GetMyEndpoint()
+        {
+            return _myEndpoint;
         }
     }
 }

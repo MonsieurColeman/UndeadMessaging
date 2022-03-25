@@ -87,5 +87,31 @@ namespace ColemanPeerToPeer.Service
             };
             Client._IncomingQueue.enQ(msg);
         }
+
+        public void GetListOfTopics(ObservableCollection<TopicModel> topics)
+        {
+            MessageProtocol msg = new MessageProtocol()
+            {
+                messageFiller = topics,
+                messageProtocolType = MessageType.userLeft
+            };
+            Client._IncomingQueue.enQ(msg);
+        }
+
+        public void GetNewTopic(TopicModel topic)
+        {
+            MessageProtocol msg = new MessageProtocol()
+            {
+                messageFiller = topic,
+                messageProtocolType = MessageType.topicCreate
+            };
+            Client._IncomingQueue.enQ(msg);
+        }
+
+        public void GetTopicMsg(MessageProtocol msg, TopicModel topic)
+        {
+            msg.messageFiller = topic;
+            Client._IncomingQueue.enQ(msg);
+        }
     }
 }

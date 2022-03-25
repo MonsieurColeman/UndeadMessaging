@@ -35,5 +35,14 @@ namespace ServiceOutliner
 
         [OperationContract]
         bool TestMessage(MessageProtocol m);
+
+        [OperationContract]
+        void LeaveTopic(MessageProtocol msg, UserModel user);
+
+        [OperationContract]
+        void MsgTopic(MessageProtocol msg, MessageModel msgModel, TopicModel topic);
+
+        [OperationContract]
+        bool CreateTopic(MessageProtocol msg, TopicModel topic);
     }
 }

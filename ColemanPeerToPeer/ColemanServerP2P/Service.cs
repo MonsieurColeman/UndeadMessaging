@@ -104,6 +104,29 @@ namespace ColemanServerP2P
             msg.messageFiller = userProfile;
             Host._IncomingQueue.enQ(msg);
         }
+
+        public void LeaveTopic(MessageProtocol msg, UserModel user)
+        {
+            msg.messageFiller = user;
+            Host._IncomingQueue.enQ(msg);
+        }
+
+        public void MsgTopic(MessageProtocol msg, MessageModel msgModel, TopicModel topic)
+        {
+            msg.messageBody = msgModel;
+            msg.messageFiller = topic;
+            Host._IncomingQueue.enQ(msg);
+        }
+
+        public bool CreateTopic(MessageProtocol msg, TopicModel topic)
+        {
+            if(!TopicList.UniqueTopicCheck(topic.ChatName))
+                return false;
+
+            msg.messageFiller = topic;
+            Host._IncomingQueue.enQ(msg);
+            return true;
+        }
     }
 }
 

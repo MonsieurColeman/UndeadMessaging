@@ -98,6 +98,13 @@ namespace ColemanPeerToPeer
             MessageBox.Show("no");
         }
 
+        private void CreateTopic(object sender, RoutedEventArgs e)
+        {
+            if(_viewModel == null)
+                _viewModel = ViewManager.GetMainViewModelInstance();
+            _viewModel.CreateTopic();
+        }
+
         private void Message_KeyDown(object sender, KeyEventArgs e)
         {
             //ignore if not return key

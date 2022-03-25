@@ -14,6 +14,7 @@ namespace ColemanServerP2P
         public static BlockingQueue<MessageProtocol> _IncomingQueue = new BlockingQueue<MessageProtocol>();
         public static BlockingQueue<MessageProtocol> _OutboundQueue = new BlockingQueue<MessageProtocol>();
         public static Dictionary<string, string> _UserList = new Dictionary<string, string>();
+        public static string ServerEndpoint = "http://localhost:8080/BasicService";
 
         /* 
          * Establishes a channel for clients to connect to
@@ -69,7 +70,7 @@ namespace ColemanServerP2P
             try
             {
                 //Open Connection
-                host = CreateChannel("http://localhost:8080/BasicService");
+                host = CreateChannel(ServerEndpoint);
                 host.Open();
                 Console.Write("\n  The service is running - Press key to exit:\n");
                 

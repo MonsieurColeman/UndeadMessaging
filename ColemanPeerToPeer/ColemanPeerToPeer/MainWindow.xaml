@@ -24,9 +24,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
             <ColumnDefinition/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.ColumnSpan="2"
+        <Border Grid.ColumnSpan="3"
                 Background="#252525"
                 MouseDown="Border_MouseDown">
 
@@ -130,13 +131,13 @@
                            Margin="5,0,0,0"
                            VerticalAlignment="Center" Grid.ColumnSpan="2"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="1" Margin="249,0,0,0">
-                        <Button Click="Btn_AddMessage">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="1" Margin="0,0,0,0">
+                        <Button Click="CreateTopic">
                             <AccessText 
                                 Name="MessageViewLeaveChatButtonLabel"
                                 Margin="5" 
                                 FontWeight="Bold" 
-                                Text="Leave Topic">
+                                Text="Create Topic">
                             </AccessText>
                         </Button>
                     </StackPanel>
@@ -195,6 +196,26 @@
 
                 
             </Grid>
+        </Grid>
+
+        <Grid Background="Ivory"
+              Grid.Row="1" Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label Content="Topics"
+                   VerticalAlignment="Center"
+                   FontWeight="Medium"
+                   Foreground="DarkOrange"
+                   Margin="8,0,8,0"/>
+
+            <ListView ItemsSource="{Binding Topics}"
+                      SelectedItem="{Binding SelectedChat}"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      Grid.Row="1"
+                      ItemContainerStyle="{StaticResource TopicCard}"/>
         </Grid>
     </Grid>
 </Window>

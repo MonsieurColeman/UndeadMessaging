@@ -14,7 +14,18 @@ namespace ServiceOutliner
         public string ImageSource { get; set; }
         public string UsernameColor { get; set; }
         public string Endpoint { get; set; }
-        public ObservableCollection<MessageModel> Messages { get; set; }
+        private ObservableCollection<MessageModel> _messages;
+        public ObservableCollection<MessageModel> Messages {
+            get
+            {
+                return _messages;
+            }
+            set
+            {
+                _messages = value;
+                OnPropertyChanged();
+            }
+        }
         private string _LastMessage;
 
         public string LastMessage

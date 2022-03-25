@@ -15,58 +15,47 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 {
     public class MainViewModel : ObservableObject
     {
-        //current view messages
-        //public  ObservableCollection<MessageModel> Messages2 { get; set; }
 
         private ObservableCollection<MessageModel> _Messages;
+        private ObservableCollection<UserModel> _users;
+        private ObservableCollection<TopicModel> _topics;
+        private string _message;
+        public string userNameColor;
+        private string _username;
+        public string _profilePicture = "https://picsum.photos/200/300";
+        public RelayCommand SendCommand { get; set; }
+        private UserModel _selectedChat;
+        private TopicModel _selectedTopic;
 
-        public ObservableCollection<MessageModel> Messages
+        public TopicModel SelectedTopic //the topic model that was selected to chat
+        {
+            get { return _selectedTopic; }
+            set { _selectedTopic = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<MessageModel> Messages //list of messages on screen???
         {
             get { return _Messages; }
             set { _Messages = value;
                 OnPropertyChanged();
             }
         }
-
-        //current view users
-
-        private ObservableCollection<UserModel> _users;
-
-        public ObservableCollection<UserModel> Users
+        public ObservableCollection<UserModel> Users //list of users
         {
             get { return _users; }
             set { _users = value;
                 OnPropertyChanged();
             }
         }
-
-        public ObservableCollection<UserModel> Users2 { get; set; }
-        //stuff
-        private string _message;
-        //otherstuff
-        public string userNameColor;
-
-        private string _username;
-        public string _profilePicture = "https://picsum.photos/200/300";
-
-
-        //public interface for username
-        public string Username
-        {
+        public string Username //public interface for username
+        {//public interface for username
             get { return _username; }
             set { _username = value;
                 OnPropertyChanged();
             }
         }
-
-
-
-        /* Commands */
-        public RelayCommand SendCommand { get; set; }
-
-        private UserModel _selectedChat;
-
-        public UserModel SelectedChat
+        public UserModel SelectedChat //The user model that was selected to chat
         {
             get { return _selectedChat; }
             set {
@@ -74,8 +63,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
-        
-        public string Message
+        public string Message //The current string in the textbar
         {
             get { return _message; }
             set { 
@@ -83,35 +71,51 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
+        public ObservableCollection<TopicModel> Topics //list of topics
+        {
+            get { return _topics; }
+            set
+            {
+                _topics = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         public MainViewModel()
         {
-            //pass to viewManager
+            //pass instance to static viewManager
             ViewManager.SetMainViewModelInstance(this);
             //create a new list for this view
             Messages = new ObservableCollection<MessageModel>();
-            //create a new lsit for this view
+            //create a new list for this view
             Users = new ObservableCollection<UserModel>();
-
+            //my username color
             userNameColor = "#000000";
-
-
-            
+            //legacy code that im afraid to delete
             SendCommand = new RelayCommand(SendMessage);
-            
         }
 
         public void SendMessage(object o)
+        /*                              */
         {
+            //do nothing if text in textbox is invalid
             if (SelectedChat == null || String.IsNullOrWhiteSpace(Message))
                 return;
 
-            //Displays message to my view only if, receipient got message
-            if(DisplayMessageToTargetPeer(SelectedChat, Message))
-                DisplayMessageToView();
+            if (SelectedChat is TopicModel topicM)
+            {
+                DisplayMessageToTopic(topicM);
+            }
+            else
+            {
+                //Displays message to my view only if, receipient got message
+                if (DisplayMessageToTargetPeer(SelectedChat, Message))
+                    DisplayMessageToView();
+            }
 
-            Message = ""; //Clears textbox
+            //Clear textbox
+            Message = "";
         }
 
         private void DisplayMessageToView()
@@ -143,6 +147,11 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             Users = U;
         }
 
+        public void SetTopics(ObservableCollection<TopicModel> topics)
+        {
+            Topics = topics;
+        }
+
         public void GainUser(UserModel U)
         {
             U = AddDemoAttributesToUserMode(U);
@@ -150,6 +159,15 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 Users = new ObservableCollection<UserModel>(){U};
             else
                 Users.Add(U);
+        }
+
+        public void GainTopic(TopicModel topic)
+        {
+            topic = AddDemoAttributesToTopicsMode(topic);
+            if (Topics == null)
+                Topics = new ObservableCollection<TopicModel>() { topic };
+            else
+                Topics.Add(topic);
         }
 
         public void RemoveUser(UserModel user)
@@ -179,7 +197,44 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             AddMessageByEndpoint(newMsq.sourceEndpoint, newMsq.messageBody);
         }
 
+        public void AddTopicMessageToChat(MessageProtocol newMsg)
+        {
+            TopicModel topic = newMsg.messageFiller;
+
+            if (Topics == null)
+                Topics = new ObservableCollection<TopicModel>() {topic};
+            
+            for(int i=0;i<Topics.Count;i++)
+                if(Topics[i].ChatName == topic.ChatName)
+                    topic = Topics[i];
+
+            //firstMsg = true;
+            if (topic.Messages == null)
+                topic.Messages = new ObservableCollection<MessageModel>();
+
+            //if (!topic.Messages.Count == 0)
+
+            UserModel user = GetUserModelFromEndpoint(newMsg.sourceEndpoint);
+            MessageModel dashMsg = new MessageModel()
+            {
+                Username = user.Username,
+                UsernameColor = user.UsernameColor,
+                ImageSource = user.ImageSource,
+                Message = newMsg.messageBody,
+                Time = DateTime.Now,
+                IsFromMe = false,
+                FirstMessage = true
+            };
+            topic.Messages.Add(dashMsg);
+        }
+
         private UserModel AddDemoAttributesToUserMode(UserModel u)
+        {
+            u.ImageSource = "https://picsum.photos/200/300";
+            return u;
+        }
+
+        private TopicModel AddDemoAttributesToTopicsMode(TopicModel u)
         {
             u.ImageSource = "https://picsum.photos/200/300";
             return u;
@@ -211,6 +266,16 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             for (int i = 0; i < Users.Count; i++)
                 if (Users[i].Endpoint == endPoint)
                     return Users[i].Username;
+            throw new NotImplementedException();
+        }
+
+        private UserModel GetUserModelFromEndpoint(string endPoint)
+        {
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i].Endpoint == endPoint)
+                    return Users[i];
+            if(endPoint == Client.GetMyEndpoint())
+                return Client.GetMyUserModel();
             throw new NotImplementedException();
         }
 
@@ -275,6 +340,27 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         private bool DisplayMessageToTargetPeer(UserModel user, string message)
         {
             return Client.SendPrivateMessage(user, message);
+        }
+
+        private bool DisplayMessageToTopic(TopicModel topic)
+        {
+            MessageModel newMsg = new MessageModel
+            {
+                Username = Username,
+                UsernameColor = userNameColor,
+                ImageSource = _profilePicture,
+                Message = Message,
+                Time = DateTime.Now,
+                IsFromMe = true,
+                FirstMessage = true
+            };
+
+            return Client.SendMessageToTopic(topic, newMsg);
+        }
+
+        public void CreateTopic()
+        {
+            Client.CreateTopic("testTopic"); 
         }
     }
 }

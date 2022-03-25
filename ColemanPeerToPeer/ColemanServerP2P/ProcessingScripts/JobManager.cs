@@ -60,60 +60,77 @@ namespace ColemanServerP2P
             _PeerService.GetListOfUsers(users);
 
             //send user list of topics
-            /*
-            List<string> topics = (TopicList.GetNumberOfTopics() != 0) ? TopicList.GetCurrentTopics() : new List<string>();
-            response = new MessageProtocol
-            {
-                sourceEndpoint = "Server",
-                messageProtocolType = MessageType.receiveCurrentUsersOnJoin,
-                messageBody = topics,
-                destinationEndpoint = job.sourceEndpoint
-            };
-            */
-            //_PeerService.SendMSG(response);
+
+            ObservableCollection<TopicModel> topics = (TopicList.GetNumberOfTopics() != 0) ? TopicList.GetCurrentTopics() : new ObservableCollection<TopicModel>();
+            //_PeerService.GetListOfTopics(response);
 
             //send everyone else in the userlist the user's endpoint
-            for(int i = 0; i < users.Count; i++)
+            for (int i = 0; i < users.Count; i++)
             {
                 UserModel a = users[i];
                 EstablishConnectionWithUser(a.Endpoint);
                 _PeerService.GetNewUser(newUser);
-                Console.WriteLine("this happened");
             }
 
             //Add User To UserList
             UserList.AddUser(newUser);
+
+            //Add User To TopicList
+            TopicList.AddUserToAllTopic(newUser);
         }
 
         private static void UserLeft(MessageProtocol job)
         {
+            //This is what is expected
+            UserModel user = job.messageFiller;
+
             //remove person from userlist
-            UserList.RemoveUser(job.messageFiller);
+            UserList.RemoveUser(user);
 
             //remove person from topic list || todo
+            TopicList.RemoveUserFromAllTopics(user);
         }
 
         private static void TopicWasCreated(MessageProtocol job)
         {
+            TopicModel topic = job.messageFiller;
+
             //add to topic list
+            TopicList.AddTopic(topic);
 
             //notify everyone
+            foreach(UserModel user in UserList.GetCurrentUsers())
+            {
+                EstablishConnectionWithUser(user.Endpoint);
+                _PeerService.GetNewTopic(topic);
+            }
         }
 
         private static void UserHasLeftTopic(MessageProtocol job)
         {
-            //remove from topic list
+            UserModel userModel = job.messageFiller;
+            string topicName = job.messageBody;
 
-            //check to see if anyone is left in topic
-            //if 0, delete
+            //remove from topic list
+            TopicList.RemoveUserFromTopic(topicName, userModel);
         }
 
         private static void TopicReceivedMessage(MessageProtocol job)
         {
-            //check topic to make sure it still exists
+            //export topicModel from job for serialization reasons
+            MessageModel msgModel = job.messageBody;
+            TopicModel topic = job.messageFiller;
+            job.messageBody = msgModel.Message;
+            job.messageFiller = null;
 
             //if exist, notify all members with the topic of the topic message
-
+            List<UserModel> usersInTopic = TopicList.TopicReceivedMsg(topic, msgModel);
+            foreach (UserModel user in usersInTopic)
+            {
+                job.destinationEndpoint = user.Endpoint;
+                EstablishConnectionWithUser(user.Endpoint);
+                _PeerService.GetTopicMsg(job, topic);
+            }
         }
     }
 }

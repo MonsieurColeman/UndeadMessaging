@@ -18,10 +18,12 @@ namespace ServiceOutliner
         [OperationContract]
         void GetListOfUsers(ObservableCollection<UserModel> users);
 
-        /*
+        
         [OperationContract]
-        void SendListOfTopics(ObservableCollection<> users);
-        */
+        void GetListOfTopics(ObservableCollection<TopicModel> topics);
+
+        [OperationContract]
+        void GetNewTopic(TopicModel topic);
 
         [OperationContract]
         void GetNewUser(UserModel newUser);
@@ -29,6 +31,8 @@ namespace ServiceOutliner
         [OperationContract]
         void UserLeft(UserModel newUser);
 
+        [OperationContract]
+        void GetTopicMsg(MessageProtocol msg, TopicModel topic);
 
         [OperationContract]
         MessageProtocol GetMSG();

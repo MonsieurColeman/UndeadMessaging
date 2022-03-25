@@ -2,6 +2,7 @@
 using ServiceOutliner;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,9 @@ namespace ColemanPeerToPeer.Service
                 case MessageType.privateMessage: //receive message from user
                     AddMessageToDashboard(job);
                     break;
+                case MessageType.topicMsg: //receive message from user
+                    AddTopicMsgToDashboard(job);
+                    break;
                 default:
                     Console.WriteLine("I receive a weird message");
                     break;
@@ -50,14 +54,15 @@ namespace ColemanPeerToPeer.Service
 
         private static void SetupTopicForDashboard(MessageProtocol setupMsg)
         {
+            ObservableCollection<TopicModel> topics = setupMsg.messageFiller;
             if (_Dashboard == null)
                 _Dashboard = ViewManager.GetMainViewModelInstance();
-            //toDo
+            _Dashboard.SetTopics(topics);
         }
 
         private static void AddTopicToDashboard(MessageProtocol dashMsg)
         {
-            //ToDO
+            _Dashboard.GainTopic(dashMsg.messageFiller);
         }
 
         private static void AddUserToDashboard(MessageProtocol dashMsg)
@@ -73,6 +78,11 @@ namespace ColemanPeerToPeer.Service
         private static void AddMessageToDashboard(MessageProtocol dashMsg)
         {
             _Dashboard.AddPrivateMessageToChat(dashMsg);
+        }
+
+        private static void AddTopicMsgToDashboard(MessageProtocol dashMsg)
+        {
+            _Dashboard.AddTopicMessageToChat(dashMsg);
         }
     }
 }
