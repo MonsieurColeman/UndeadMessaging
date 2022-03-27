@@ -1,4 +1,9 @@
-﻿using ServiceOutliner;
+﻿/*
+ This file holds the Client, the heart of the application.
+The Client is an intermediary between the GUI and the Service 
+ */
+
+using ServiceOutliner;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,8 +29,8 @@ namespace ColemanPeerToPeer.Service
         public static string _serverEndpoint = ""; //gets set by ctor functions
         private static UserModel myUserModel = null;
         public static string _username = "";
-        public static string _usernameColor = "#000000";
-        public static string _profilePicture = "https://picsum.photos/200/300";
+        public static string _usernameColor = GlobalStrings.color_black;
+        public static string _profilePicture = GlobalStrings.lipsum_Image;
 
         public static void StartClientBehavior()
         {

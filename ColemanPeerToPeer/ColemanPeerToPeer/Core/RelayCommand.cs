@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ Template file used to make use of conditional commands
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,3 +39,11 @@ namespace ColemanPeerToPeer.Core
         }
     }
 }
+
+/*
+ Maintenance History
+
+0.9: Ctrl+C 
+1.0: Ctrl+V
+ */
+

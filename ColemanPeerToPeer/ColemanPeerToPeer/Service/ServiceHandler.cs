@@ -75,3 +75,12 @@ namespace ColemanPeerToPeer.Service
         }
     }
 }
+
+
+/*
+ Maintenance History
+
+0.9 Made Maintenance function a file of its own for global calls
+1.0 Added a maintenance history to this file
+ 
+ */

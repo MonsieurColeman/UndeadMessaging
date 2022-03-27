@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*
+ This file is used to notify the ui when a property has been changed
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -19,3 +23,9 @@ namespace ColemanPeerToPeer.Core
         }
     }
 }
+
+/* Maintenance History
+ 
+ 0.9: Added functionality
+ 1.0: Added Comments
+ */

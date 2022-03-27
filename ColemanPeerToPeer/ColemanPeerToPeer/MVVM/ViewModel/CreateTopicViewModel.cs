@@ -1,8 +1,6 @@
 ﻿
 /*
-    internal class CreateTopicViewModel
-    {
-    }
+    This file contaions the GUI logic for the Create Topic Window
 */
 
 using ColemanPeerToPeer.Service;
@@ -34,6 +32,7 @@ namespace ColemanPeerToPeer
         }
 
         private void Win_Btn_CreateTopic(object sender, RoutedEventArgs e)
+        //Topic creation behavior resulting from button event 
         {
             //do nothing if nothing is in the textbox
             if (String.IsNullOrWhiteSpace(newTopicTextbox.Text))
@@ -48,18 +47,26 @@ namespace ColemanPeerToPeer
             //Note: errors occur when it does not have letters
             if (!Regex.IsMatch(newTopicName, @"^[a-zA-Z]+$"))
             {
-                MessageBox.Show("Notice: Your topic name can only contain characters!");
+                MessageBox.Show(GlobalStrings.inputValidation_TopicCreation);
                 return;
             }
 
-
-            Client.CreateTopic("Topic: "+newTopicName);
+            Client.CreateTopic(GlobalStrings.tag_TopicCreation+newTopicName);
             this.Close();
         }
 
         private void Win_Btn_CancelTopicCreation(object sender, RoutedEventArgs e)
+        //A button behavior that closes the window
         {
             this.Close();
         }
     }
 }
+
+/*
+ Maintenance History
+
+0.7 Added Topic Creation functionality
+0.8 Added Input validation
+1.0 Added comments 
+ */

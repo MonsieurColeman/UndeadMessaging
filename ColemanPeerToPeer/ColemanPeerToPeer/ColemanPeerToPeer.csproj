@@ -76,6 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\GlobalStrings.cs" />
     <Compile Include="MVVM\ViewModel\CreateTopicViewModel.cs" />
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="Service\BlockingQueue.cs" />
