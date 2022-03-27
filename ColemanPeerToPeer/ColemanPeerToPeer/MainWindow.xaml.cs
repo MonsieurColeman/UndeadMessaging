@@ -105,29 +105,6 @@ namespace ColemanPeerToPeer
             _viewModel.ShowCreateTopicDialog();
         }
 
-        private void Message_KeyDown(object sender, KeyEventArgs e)
-        {
-            //ignore if not return key
-            if (e.Key != Key.Return)
-                return;
-
-            //make sure obj is instantiated
-            ViewModelCheck();
-
-            //Add message to the view model and clear textbox
-            _viewModel.AddMessageToChat(new MessageModel
-            {
-                Username = username,
-                UsernameColor = profileColor,
-                ImageSource = profilePicture,
-                Message = _viewModel.Message,
-                Time = DateTime.Now,
-                IsFromMe = false,
-                FirstMessage = true
-            });
-            _viewModel.Message = "";
-        }
-
         private void LeaveTopic(object sender, RoutedEventArgs e)
         {
             if (_viewModel == null)

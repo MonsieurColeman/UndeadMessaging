@@ -1,4 +1,11 @@
-﻿using ColemanPeerToPeer.Service;
+﻿/*
+ This file hands the GUI logic of the Login View
+
+ This file interactions with the mainView's ctor to determine login success
+ */
+
+
+using ColemanPeerToPeer.Service;
 using ServiceOutliner;
 using System;
 using System.Collections.Generic;
@@ -33,6 +40,7 @@ namespace ColemanPeerToPeer
         }
 
         private void Btn_Login(object sender, RoutedEventArgs e)
+        //Login behavior to the system, - activated by a button behavior
         {
             string proposedUsername = usernameTextbox.Text;
 
@@ -44,10 +52,10 @@ namespace ColemanPeerToPeer
             if(proposedUsername.Length > 15)
                 proposedUsername = proposedUsername.Substring(0, 15);
 
+            //If string doesnt match the requirements, tell the user
             if (!Regex.IsMatch(proposedUsername, @"^[A-Za-z0-9_-]*$"))
             {
-                MessageBox.Show("Notice! \n\nYour username may only contain:" +
-                    "\n > Letters \n > Numbers \n > Underscores \n > Dashes \n > 15 characters");
+                MessageBox.Show(GlobalStrings.inputValidation_Login);
                 return;
             }
 
@@ -58,6 +66,9 @@ namespace ColemanPeerToPeer
                 return;
             }
 
+            //Make client obj known of username
+            Client._username = proposedUsername;
+
             //Set the Dashboard Username
             ViewManager.GetMainViewModelInstance().Username = proposedUsername;
 
@@ -67,30 +78,26 @@ namespace ColemanPeerToPeer
         }
 
         private void NotifyUserNameWasTaken()
+        //displays a warning popup
         {
-            MessageBox.Show("That name is in use!");
+            MessageBox.Show(GlobalStrings.popup_duplicateUsername);
         }
 
 
         private bool PerformLogin(string username, string usernameColor)
+        //interfaces with the servers service and returns a bool representing
+        //the success of the call
         {
             return Client.JoinServer(username, usernameColor);
         }
-
-        private MessageProtocol GetJoinMessage()
-        {
-            return new MessageProtocol()
-            {
-                sourceEndpoint = _url,
-                messageProtocolType = MessageType.join,
-                messageBody = "thisIsATest",
-                destinationEndpoint = "server"
-            };
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            MessageBox.Show("oo");
-        }
     }
 }
+
+/*
+ Maintenance History
+
+0.7 Added login functionality
+0.8 Added cooperation with main view
+0.9 Added input validation
+1.0 Refactoring and commenting
+ */

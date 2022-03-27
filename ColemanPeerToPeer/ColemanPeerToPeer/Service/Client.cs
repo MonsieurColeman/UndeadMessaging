@@ -23,6 +23,9 @@ namespace ColemanPeerToPeer.Service
         private static string _myEndpoint = ""; //gets set by ctor functions
         public static string _serverEndpoint = ""; //gets set by ctor functions
         private static UserModel myUserModel = null;
+        public static string _username = "";
+        public static string _usernameColor = "#000000";
+        public static string _profilePicture = "https://picsum.photos/200/300";
 
         public static void StartClientBehavior()
         {

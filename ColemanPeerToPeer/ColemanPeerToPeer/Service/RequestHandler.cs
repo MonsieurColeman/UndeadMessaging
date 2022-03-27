@@ -52,49 +52,71 @@ namespace ColemanPeerToPeer.Service
         {
             if (_Dashboard == null)
                 _Dashboard = ViewManager.GetMainViewModelInstance();
+            //ObservableCollection<UserModel> 
             _Dashboard.SetUsers(setupMsg.messageFiller);
         }
 
         private static void SetupTopicForDashboard(MessageProtocol setupMsg)
         {
             ObservableCollection<TopicModel> topics = setupMsg.messageFiller;
-            //ObservableCollection<UserModel> topicDashboardObjs = new ObservableCollection<UserModel>();
+            if(topics.Count == 0)
+                return;
 
 
             if (_Dashboard == null)
                 _Dashboard = ViewManager.GetMainViewModelInstance();
-            _Dashboard.SetTopics(topics);
+            _Dashboard.SetDashTopics(topics);
         }
 
         private static void AddTopicToDashboard(MessageProtocol dashMsg)
         {
-            //_Dashboard.GainTopic(Converter.TopicModelToUserModel(dashMsg.messageFiller));
-            _Dashboard.GainTopic(dashMsg.messageFiller);
+            TopicModel topic = dashMsg.messageFiller;
+            TopicModel decorateTopic = AddDemoAttributesToTopicsMode(topic);
+            _Dashboard.AddTopicToDashboard(decorateTopic);
         }
 
         private static void AddUserToDashboard(MessageProtocol dashMsg)
         {
-            _Dashboard.GainUser(dashMsg.messageFiller);
+            UserModel user = dashMsg.messageFiller;
+            user = AddDemoAttributesToUserMode(user);
+            _Dashboard.AddUserToDashboard(user);
         }
 
         private static void RemoveUserFromDashboard(MessageProtocol dashMsg)
         {
-            _Dashboard.RemoveUser(dashMsg.messageFiller);
+            _Dashboard.RemoveUserFromDashboard(dashMsg.messageFiller);
         }
 
         private static void AddMessageToDashboard(MessageProtocol dashMsg)
         {
-            _Dashboard.AddPrivateMessageToChat(dashMsg);
+            _Dashboard.AddPrivateMessageToChat(dashMsg.sourceEndpoint, dashMsg.messageBody);
         }
 
         private static void AddTopicMsgToDashboard(MessageProtocol dashMsg)
         {
-            _Dashboard.AddTopicMessageToChat(dashMsg);
+            TopicModel topic = dashMsg.messageFiller;
+            string sourceEndpoint = dashMsg.sourceEndpoint;
+            string msg = dashMsg.messageBody;
+            _Dashboard.AddTopicMessageToChat(topic, sourceEndpoint, msg);
         }
 
         private static void RemoveTopicFromDashboard(MessageProtocol dashMsg)
         {
             _Dashboard.RemoveTopicFromDash(dashMsg.messageFiller);
+        }
+
+
+
+        private static TopicModel AddDemoAttributesToTopicsMode(TopicModel u)
+        {
+            u.ImageSource = "https://picsum.photos/200/300";
+            return u;
+        }
+
+        private static UserModel AddDemoAttributesToUserMode(UserModel u)
+        {
+            u.ImageSource = "https://picsum.photos/200/300";
+            return u;
         }
     }
 }

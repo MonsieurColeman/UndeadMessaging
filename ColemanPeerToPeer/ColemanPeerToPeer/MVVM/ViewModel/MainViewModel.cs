@@ -1,4 +1,11 @@
-﻿using ColemanPeerToPeer.Core;
+﻿/*
+ This file handles the display logic of the client dashboard
+
+This file associates with "Client" to make service calls
+This file also associates with mainWindow for GUI related calls
+ */
+
+using ColemanPeerToPeer.Core;
 using ColemanPeerToPeer.Service;
 using ColemanPeerToPeer.TestScripts;
 using ServiceOutliner;
@@ -15,25 +22,16 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 {
     public class MainViewModel : ObservableObject
     {
-
+        #region Backing Properties
         private ObservableCollection<MessageModel> _Messages;
         private ObservableCollection<UserModel> _users;
-        private ObservableCollection<TopicModel> _topics;
         private string _message;
-        public string userNameColor;
         private string _username;
-        public string _profilePicture = "https://picsum.photos/200/300";
         public RelayCommand SendCommand { get; set; }
         private UserModel _selectedChat;
-        private TopicModel _selectedTopic;
+        #endregion
 
-        public TopicModel SelectedTopic //the topic model that was selected to chat
-        {
-            get { return _selectedTopic; }
-            set { _selectedTopic = value;
-                OnPropertyChanged();
-            }
-        }
+        #region Public Properties
         public ObservableCollection<MessageModel> Messages //list of messages on screen???
         {
             get { return _Messages; }
@@ -49,7 +47,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             }
         }
         public string Username //public interface for username
-        {//public interface for username
+        {
             get { return _username; }
             set { _username = value;
                 OnPropertyChanged();
@@ -71,241 +69,217 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
-        public ObservableCollection<TopicModel> Topics //list of topics
-        {
-            get { return _topics; }
-            set
-            {
-                _topics = value;
-                OnPropertyChanged();
-            }
-        }
+        #endregion
 
 
         public MainViewModel()
         {
             //pass instance to static viewManager
             ViewManager.SetMainViewModelInstance(this);
+
             //create a new list for this view
             Messages = new ObservableCollection<MessageModel>();
+
             //create a new list for this view
             Users = new ObservableCollection<UserModel>();
-            //my username color
-            userNameColor = "#000000";
-            //legacy code that im afraid to delete
+
+            //Textbox On enter code
             SendCommand = new RelayCommand(SendMessage);
         }
 
+
         public void SendMessage(object o)
-        /*                              */
+        /*Chat Textbox behavior*/
         {
-            //do nothing if text in textbox is invalid
+            //do nothing if text in textbox is invalid or a chat isnt selected
             if (SelectedChat == null || String.IsNullOrWhiteSpace(Message))
                 return;
 
+            //If the Chat that was selected was a TopicType
             if (SelectedChat is TopicModel tm)
-            {
                 DisplayMessageToTopic(tm);
-            }
+
+
+            //Displays message to my view only if, receipient got message
             else
-            {
-                //Displays message to my view only if, receipient got message
                 if (DisplayMessageToTargetPeer(SelectedChat, Message))
                     DisplayMessageToView();
-            }
 
             //Clear textbox
             Message = "";
         }
 
         private void DisplayMessageToView()
+        //Behavior for displaying a chat message to the currently selected chat view from me
         {
-            MessageModel newMsg = new MessageModel
-            {
-                Username = Username,
-                UsernameColor = userNameColor,
-                ImageSource = _profilePicture,
-                Message = Message,
-                Time = DateTime.Now,
-                IsFromMe = true,
-                FirstMessage = true
-            };
+            //Add Msg to the current chat object
+            if (SelectedChat.Messages != null) SelectedChat.Messages.Add(GetMsgFromUsermodel(Client.GetMyUserModel(), Message));
+            else SelectedChat.Messages = new ObservableCollection<MessageModel>() { GetMsgFromUsermodel(Client.GetMyUserModel(), Message) };
 
-            if (SelectedChat.Messages == null)
-                SelectedChat.Messages = new ObservableCollection<MessageModel> { newMsg };
-            else
-                SelectedChat.Messages.Add(newMsg);
-
+            //Activate Notify Property to update dashboard
             SelectedChat = SelectedChat;
-            SelectedChat.LastMessage = SelectedChat.LastMessage; //just calling it updates user card
-            //int truncatedNum = (Message.Count() < 30) ? Message.Count() : 30;
-            //SelectedChat.LastMessage = "You: " + Message.Substring(0, truncatedNum);
-        }
-
-        public void SetUsers(ObservableCollection<UserModel> U)
-        {
-            Users = U;
-        }
-
-        public void SetTopics(ObservableCollection<TopicModel> topics)
-        {
-            if (topics.Count == 0)
-                return;
-
-            //ObservableCollection<UserModel> topicList = Converter.TopicListToUserList(topics);
-            foreach(TopicModel topic in topics)
-                Users.Add(topic);
-        }
-
-        public void GainUser(UserModel U)
-        {
-            U = AddDemoAttributesToUserMode(U);
-            if (Users == null)
-                Users = new ObservableCollection<UserModel>(){U};
-            else
-                Users.Add(U);
-        }
-
-        public void GainTopic(TopicModel givenTopic)
-        {
-            givenTopic = AddDemoAttributesToTopicsMode(givenTopic);
-            UserModel topic = givenTopic;//Converter.TopicModelToUserModel(givenTopic);
-
-            if (Users == null)
-                Users = new ObservableCollection<UserModel>() { topic };
-            else
-                Users.Add(topic);
-        }
-
-        public void RemoveUser(UserModel user)
-        {
-            if (Users == null)
-                return;
-
-            if (!UserListContainsUser(user))
-                return;
-
-            RemoveUserFromUserList(user);
-        }
-
-        public void AddMessageToChat(MessageModel message)
-        {
-            if(_selectedChat!= null)
-                _selectedChat.Messages.Add(message);
-        }
-
-        public void AddPrivateMessageToChat(MessageProtocol newMsq)
-        {
-            //if we receive a message from someone not in our user list,
-            //do nothing
-            if (!UserListContainsUser(newMsq.sourceEndpoint))
-                return;
-
-            AddMessageByEndpoint(newMsq.sourceEndpoint, newMsq.messageBody);
-        }
-
-
-        public void AddTopicMessageToChat(MessageProtocol newMsg)
-        {
-            TopicModel topic = newMsg.messageFiller;
-
-            if (Users == null)
-                return ;
-
-            /*for (int i = 0; i < Users.Count; i++)
-                if (Users[i].ChatName == topic.ChatName)
-                    topic = (TopicModel)Users[i];
-                else
-                {
-                    Console.WriteLine("--"+Users[i].Username);
-                    Console.WriteLine(topic.ChatName);
-                }
-            */
-            foreach (UserModel userM in Users)
-                if (userM is TopicModel top)
-                {
-                    if (top.ChatName == topic.ChatName)
-                        topic = top;
-                    else
-                    {
-                        Console.WriteLine("--" + top.Username);
-                        Console.WriteLine(topic.ChatName);
-                    }
-                }
-
-            //firstMsg = true;
-            if (topic.Messages == null)
-                topic.Messages = new ObservableCollection<MessageModel>();
-
-            //if (!topic.Messages.Count == 0)
-
-            UserModel user = GetUserModelFromEndpoint(newMsg.sourceEndpoint);
-            MessageModel dashMsg = new MessageModel()
-            {
-                Username = user.Username,
-                UsernameColor = user.UsernameColor,
-                ImageSource = user.ImageSource,
-                Message = newMsg.messageBody,
-                Time = DateTime.Now,
-                IsFromMe = false,
-                FirstMessage = true
-            };
-            topic.Messages.Add(dashMsg);
             SelectedChat.LastMessage = SelectedChat.LastMessage;
         }
 
-        /*
-        public void AddTopicMessageToChat(MessageProtocol newMsg)
+
+        #region Main Topic Functions
+        public void SetDashTopics(ObservableCollection<TopicModel> topics)
+        //Behavior to display list of topics on dash upon login
         {
-            TopicModel topic = newMsg.messageFiller;
+            //add topic models to the chat list
+            foreach (TopicModel topic in topics)
+                Users.Add(topic);
+        }
 
-            if (Topics == null)
-                Topics = new ObservableCollection<TopicModel>() {topic};
-            
-            for(int i=0;i<Topics.Count;i++)
-                if(Topics[i].ChatName == topic.ChatName)
-                    topic = Topics[i];
+        public void AddTopicToDashboard(TopicModel givenTopic)
+        //Adds topic chat item to dashboard
+        {
+            UserModel topic = givenTopic;
+            Users.Add(topic);
+        }
 
-            //firstMsg = true;
+        public void AddTopicMessageToChat(TopicModel topic, string endpointSrc, string msg)
+        //Puts message in dashboard topic object and notifies user that a message has been received
+        {
+            //paranoia check
+            if (Users == null)
+                return;
+
+            //Get the actual topicModel
+            foreach (UserModel userM in Users)
+                if (userM is TopicModel top)
+                    if (top.ChatName == topic.ChatName)
+                        topic = top;
+
+            //Add new message to topic object
             if (topic.Messages == null)
-                topic.Messages = new ObservableCollection<MessageModel>();
+                topic.Messages = new ObservableCollection<MessageModel>() { GetMsgFromUsermodel(GetUserModelFromEndpoint(endpointSrc), msg) };
+            else
+                topic.Messages.Add(GetMsgFromUsermodel(GetUserModelFromEndpoint(endpointSrc), msg));
 
-            //if (!topic.Messages.Count == 0)
-
-            UserModel user = GetUserModelFromEndpoint(newMsg.sourceEndpoint);
-            MessageModel dashMsg = new MessageModel()
-            {
-                Username = user.Username,
-                UsernameColor = user.UsernameColor,
-                ImageSource = user.ImageSource,
-                Message = newMsg.messageBody,
-                Time = DateTime.Now,
-                IsFromMe = false,
-                FirstMessage = true
-            };
-            topic.Messages.Add(dashMsg);
+            //Call Notify Property on Topic to show latest message
+            topic.LastMessage = topic.LastMessage;
         }
-        */
 
-        private UserModel AddDemoAttributesToUserMode(UserModel u)
+        public void RemoveTopicFromDash(TopicModel topic)
+        /* Looks within chat items to find topic model and then removes it*/
         {
-            u.ImageSource = "https://picsum.photos/200/300";
-            return u;
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i] is TopicModel tm)
+                    if (tm.ChatName == topic.ChatName)
+                    {
+                        Users.RemoveAt(i);
+                        return;
+                    }
         }
 
-        private TopicModel AddDemoAttributesToTopicsMode(TopicModel u)
+        private bool DisplayMessageToTopic(TopicModel model)
+        //Sends server a msq that we would like to post to a topic
+        //bool for no reason
         {
-            u.ImageSource = "https://picsum.photos/200/300";
-            return u;
+            return Client.SendMessageToTopic(model, GetMsgFromUsermodel(Client.GetMyUserModel(), Message));
+        }
+        #endregion
+
+        #region Main User Functions
+        public void SetUsers(ObservableCollection<UserModel> users)
+        //Behavior to display list of users on dash upon login
+        {
+            Users = users;
         }
 
+        public void AddUserToDashboard(UserModel user)
+        //Adds user chat item to dashboard
+        {
+            Users.Add(user);
+        }
+
+        public void RemoveUserFromDashboard(UserModel user)
+        //Removes users model from chat items list
+        {
+            //null validation
+            if (Users == null)
+                return;
+            if (!UserListContainsUser(user))
+                return;
+
+            //remove usermodel for chat by comparing endpoints
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i].Endpoint == user.Endpoint)
+                {
+                    Users.RemoveAt(i);
+                    return;
+                }
+        }
+
+        public void AddPrivateMessageToChat(string sourceEndpoint, string msg)
+        //Adds msg to the dashboard user object of the sending user's endpoint
+        {
+            //do nothing if i dont know this person | stranger danger
+            if (!UserListContainsUser(sourceEndpoint))
+                return;
+
+            //find the user within the user list
+            for (int i = 0; i < Users.Count; i++)
+                if (Users[i].Endpoint == sourceEndpoint)
+                {
+                    //Add Message to dashboard object
+                    if (Users[i].Messages != null) Users[i].Messages.Add(GetMsgFromUsermodel(Users[i], msg));
+                    else Users[i].Messages = new ObservableCollection<MessageModel>() { GetMsgFromUsermodel(Users[i], msg) };
+
+                    //activate notify property
+                    Users[i].LastMessage = Users[i].LastMessage;
+                    return;
+                }
+        }
+        #endregion
+
+        #region Main Btn Functions
         public void ShutdownChat()
+        //Performs Cleanup, when client wants to exit application
         {
             Client.ShutdownChat(Users);
         }
 
+        public void ShowCreateTopicDialog()
+        //Shows dialog window when user wants to create a new topic
+        {
+            CreateTopicView newTopicWindow = new CreateTopicView();
+            newTopicWindow.ShowDialog();
+        }
+
+        public void LeaveTopic()
+        //Sends msq to server that we want to leave the topic
+        {
+            if (SelectedChat == null)
+                return;
+
+            if (!(SelectedChat is TopicModel t))
+                return;
+
+            Client.LeaveTopic(SelectedChat.ChatName);
+            return;
+        }
+        #endregion
+
+        #region HelperFunctions
+        private MessageModel GetMsgFromUsermodel(UserModel user, string message)
+        //Creates a chat message (to be displayed) from a string and user profile
+        {
+            return new MessageModel()
+            {
+                Username = user.Username,
+                UsernameColor = user.UsernameColor,
+                ImageSource = user.ImageSource,
+                Message = message,
+                Time = DateTime.Now,
+                IsFromMe = false,
+                FirstMessage = true
+            };
+        }
 
         private bool UserListContainsUser(UserModel user)
+        //Iterates over list to find a matching endpoint
         {
             for (int i = 0; i < Users.Count; i++)
                 if (Users[i].Endpoint == user.Endpoint)
@@ -314,6 +288,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         }
 
         private bool UserListContainsUser(string endPoint)
+        //Iterates over list to find a matching endpoint
         {
             for (int i = 0; i < Users.Count; i++)
                 if (Users[i].Endpoint == endPoint)
@@ -322,6 +297,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         }
 
         private string GetUsernameFromEndpoint(string endPoint)
+        //Performs endpoint comparison to find matching username
         {
             for (int i = 0; i < Users.Count; i++)
                 if (Users[i].Endpoint == endPoint)
@@ -330,148 +306,46 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         }
 
         private UserModel GetUserModelFromEndpoint(string endPoint)
+        //Performs endpoint comparison to find matching usermodel
         {
             for (int i = 0; i < Users.Count; i++)
                 if (Users[i].Endpoint == endPoint)
                     return Users[i];
-            if(endPoint == Client.GetMyEndpoint())
+            if (endPoint == Client.GetMyEndpoint())
                 return Client.GetMyUserModel();
             throw new NotImplementedException();
         }
 
-        private void RemoveUserFromUserList(UserModel user)
-        {
-            UserModel u;
-            for (int i = 0; i < Users.Count; i++)
-            {
-                if (Users[i].Endpoint == user.Endpoint)
-                    Users.RemoveAt(i);
-            }
-        }
-
-        public void RemoveTopicFromDash(TopicModel topic)
-        {
-            for (int i = 0; i < Users.Count; i++)
-            {
-                if(Users[i] is TopicModel tm)
-                    if (tm.ChatName == topic.ChatName)
-                    {
-                        Users.RemoveAt(i);
-                        return;
-                    }
-            }
-        }
-
-        private void AddMessageByEndpoint(string endpoint, string msg)
-        {
-            bool firstMsg;
-            for (int i = 0; i < Users.Count; i++)
-            {
-                if (Users[i].Endpoint == endpoint)
-                {
-                    //safe way of checking for first msg without risking
-                    //null exception
-                    //Only switch true to false if intending to implement
-                    //different display of messages when the last message is by the
-                    //same person sending a new message
-                    firstMsg = true;
-                    if(Users[i].Messages != null)
-                        if(Users[i].Messages.Count > 0)
-                            if(Users[i].Messages.Last().Username == GetUsernameFromEndpoint(endpoint))
-                                //firstMsg = false;
-                                firstMsg = true;
-
-                    MessageModel newMsg = new MessageModel()
-                    {
-                        Username = Users[i].Username,
-                        UsernameColor = Users[i].UsernameColor,
-                        ImageSource = Users[i].ImageSource,
-                        Message = msg,
-                        Time = DateTime.Now,
-                        IsFromMe = false,
-                        FirstMessage = firstMsg
-                    };
-
-                    //Add Message
-                    if (Users[i].Messages != null)
-                    {
-                        Users[i].Messages.Add(newMsg);
-
-                    }
-                    else
-                    {
-                        Users[i].Messages = new ObservableCollection<MessageModel>() { newMsg };
-
-                    }
-                    int truncatedNum = (msg.Count() < 30) ? msg.Count() : 30;
-                    //Users[i].LastMessage = "You: " + msg.Substring(0, truncatedNum);
-                    Users[i].LastMessage = ""; //just setting it updates card
-                }
-            }
-        }
-
         private bool DisplayMessageToTargetPeer(UserModel user, string message)
+        //Helper method which returns true if the target received the message to indicated
+        //that we should display the message to our own dashboard
         {
             return Client.SendPrivateMessage(user, message);
         }
 
-        private bool DisplayMessageToTopic(TopicModel model)
+        private bool ConsecutiveMessages(UserModel chatModel, string endpoint)
+        /*An after project function | adds functionality to change message display
+         based on if a person has send consecutives messages*/
         {
-            MessageModel newMsg = new MessageModel
-            {
-                Username = Username,
-                UsernameColor = userNameColor,
-                ImageSource = _profilePicture,
-                Message = Message,
-                Time = DateTime.Now,
-                IsFromMe = true,
-                FirstMessage = true
-            };
-
-            return Client.SendMessageToTopic(model, newMsg);
+            bool firstMsg = true;
+            if (chatModel.Messages != null)
+                if (chatModel.Messages.Count > 0)
+                    if (chatModel.Messages.Last().Username == GetUsernameFromEndpoint(endpoint))
+                        firstMsg = false;
+            return firstMsg;
         }
-
-        public void LeaveTopic()
-        {
-            if (SelectedChat == null)
-                return;
-
-            if (!(SelectedChat is TopicModel t))
-                return;
-
-            string s = SelectedChat.ChatName;
-
-            Client.LeaveTopic(SelectedChat.ChatName);
-            return;
-        }
-        /*
-        private bool DisplayMessageToTopic(UserModel model)
-        {
-            MessageModel newMsg = new MessageModel
-            {
-                Username = Username,
-                UsernameColor = userNameColor,
-                ImageSource = _profilePicture,
-                Message = Message,
-                Time = DateTime.Now,
-                IsFromMe = true,
-                FirstMessage = true
-            };
-
-            return Client.SendMessageToTopic(Converter.UserModelToTopicModel(model), newMsg);
-        }
-        */
-        public void ShowCreateTopicDialog()
-        {
-            CreateTopicView newTopicWindow = new CreateTopicView();
-            newTopicWindow.ShowDialog(); 
-        }
+        #endregion
     }
 }
 
-
-/*
- To add a chat to the view,
-you add a user which is an ObservableCollection<UserModel>
-that has a chat bound to it; which is ObservableCollection<MessageModel>
+/* 
+ * Maintenance History
+ * 
+ * 0.1: Made prototype of messaging dashboard utilizing binding and properties
+ * 0.3: Added inheritance via Observable Objects which leverages reflection
+ * 0.4: Added relationship with view manager due to sporatic instantiation
+ * 0.6: This file now has a relationship with Client
+ * 0.7: Added Peer to Peer functionality
+ * 0.8: Added topic functionality
+ * 0.9: Heavy refactoring and commenting
  */
