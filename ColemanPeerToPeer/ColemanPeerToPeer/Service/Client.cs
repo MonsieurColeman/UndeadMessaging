@@ -21,7 +21,7 @@ namespace ColemanPeerToPeer.Service
         public static ServiceHost hostingService = null;
         public static BlockingQueue<MessageProtocol> _IncomingQueue = new BlockingQueue<MessageProtocol>();
         private static string _myEndpoint = ""; //gets set by ctor functions
-        static string _serverEndpoint = ""; //gets set by ctor functions
+        public static string _serverEndpoint = ""; //gets set by ctor functions
         private static UserModel myUserModel = null;
 
         public static void StartClientBehavior()
@@ -189,11 +189,27 @@ namespace ColemanPeerToPeer.Service
             });
         }
 
+        public static void LeaveTopic(string topicName)
+        {
+            serverService.LeaveTopic(new MessageProtocol()
+            {
+                sourceEndpoint = _myEndpoint,
+                messageBody = topicName,
+                messageProtocolType = MessageType.leaveTopic,
+                destinationEndpoint = _serverEndpoint
+            },
+            myUserModel
+            );
+            return;
+        }
+
         public static void ShutdownChat(ObservableCollection<UserModel> Userlist)
         {
             UserModel user;
             for (int i = 0; i < Userlist.Count; i++)
             {
+                if (Userlist[i] is TopicModel topic)
+                    continue;
                 user = Userlist[i];
                 EstablishConnectionWithUser(user.Endpoint);
                 _PeerService.UserLeft(myUserModel);

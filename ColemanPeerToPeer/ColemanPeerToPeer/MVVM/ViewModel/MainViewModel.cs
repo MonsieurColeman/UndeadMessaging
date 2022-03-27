@@ -103,9 +103,9 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             if (SelectedChat == null || String.IsNullOrWhiteSpace(Message))
                 return;
 
-            if (SelectedChat is TopicModel topicM)
+            if (SelectedChat is TopicModel tm)
             {
-                DisplayMessageToTopic(topicM);
+                DisplayMessageToTopic(tm);
             }
             else
             {
@@ -149,7 +149,12 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
 
         public void SetTopics(ObservableCollection<TopicModel> topics)
         {
-            Topics = topics;
+            if (topics.Count == 0)
+                return;
+
+            //ObservableCollection<UserModel> topicList = Converter.TopicListToUserList(topics);
+            foreach(TopicModel topic in topics)
+                Users.Add(topic);
         }
 
         public void GainUser(UserModel U)
@@ -161,13 +166,15 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 Users.Add(U);
         }
 
-        public void GainTopic(TopicModel topic)
+        public void GainTopic(TopicModel givenTopic)
         {
-            topic = AddDemoAttributesToTopicsMode(topic);
-            if (Topics == null)
-                Topics = new ObservableCollection<TopicModel>() { topic };
+            givenTopic = AddDemoAttributesToTopicsMode(givenTopic);
+            UserModel topic = givenTopic;//Converter.TopicModelToUserModel(givenTopic);
+
+            if (Users == null)
+                Users = new ObservableCollection<UserModel>() { topic };
             else
-                Topics.Add(topic);
+                Users.Add(topic);
         }
 
         public void RemoveUser(UserModel user)
@@ -197,6 +204,56 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             AddMessageByEndpoint(newMsq.sourceEndpoint, newMsq.messageBody);
         }
 
+
+        public void AddTopicMessageToChat(MessageProtocol newMsg)
+        {
+            TopicModel topic = newMsg.messageFiller;
+
+            if (Users == null)
+                return ;
+
+            /*for (int i = 0; i < Users.Count; i++)
+                if (Users[i].ChatName == topic.ChatName)
+                    topic = (TopicModel)Users[i];
+                else
+                {
+                    Console.WriteLine("--"+Users[i].Username);
+                    Console.WriteLine(topic.ChatName);
+                }
+            */
+            foreach (UserModel userM in Users)
+                if (userM is TopicModel top)
+                {
+                    if (top.ChatName == topic.ChatName)
+                        topic = top;
+                    else
+                    {
+                        Console.WriteLine("--" + top.Username);
+                        Console.WriteLine(topic.ChatName);
+                    }
+                }
+
+            //firstMsg = true;
+            if (topic.Messages == null)
+                topic.Messages = new ObservableCollection<MessageModel>();
+
+            //if (!topic.Messages.Count == 0)
+
+            UserModel user = GetUserModelFromEndpoint(newMsg.sourceEndpoint);
+            MessageModel dashMsg = new MessageModel()
+            {
+                Username = user.Username,
+                UsernameColor = user.UsernameColor,
+                ImageSource = user.ImageSource,
+                Message = newMsg.messageBody,
+                Time = DateTime.Now,
+                IsFromMe = false,
+                FirstMessage = true
+            };
+            topic.Messages.Add(dashMsg);
+        }
+
+        /*
         public void AddTopicMessageToChat(MessageProtocol newMsg)
         {
             TopicModel topic = newMsg.messageFiller;
@@ -227,6 +284,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             };
             topic.Messages.Add(dashMsg);
         }
+        */
 
         private UserModel AddDemoAttributesToUserMode(UserModel u)
         {
@@ -244,6 +302,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
         {
             Client.ShutdownChat(Users);
         }
+
 
         private bool UserListContainsUser(UserModel user)
         {
@@ -286,6 +345,19 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             {
                 if (Users[i].Endpoint == user.Endpoint)
                     Users.RemoveAt(i);
+            }
+        }
+
+        public void RemoveTopicFromDash(TopicModel topic)
+        {
+            for (int i = 0; i < Users.Count; i++)
+            {
+                if(Users[i] is TopicModel tm)
+                    if (tm.ChatName == topic.ChatName)
+                    {
+                        Users.RemoveAt(i);
+                        return;
+                    }
             }
         }
 
@@ -342,7 +414,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             return Client.SendPrivateMessage(user, message);
         }
 
-        private bool DisplayMessageToTopic(TopicModel topic)
+        private bool DisplayMessageToTopic(TopicModel model)
         {
             MessageModel newMsg = new MessageModel
             {
@@ -355,9 +427,39 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 FirstMessage = true
             };
 
-            return Client.SendMessageToTopic(topic, newMsg);
+            return Client.SendMessageToTopic(model, newMsg);
         }
 
+        public void LeaveTopic()
+        {
+            if (SelectedChat == null)
+                return;
+
+            if (!(SelectedChat is TopicModel t))
+                return;
+
+            string s = SelectedChat.ChatName;
+
+            Client.LeaveTopic(SelectedChat.ChatName);
+            return;
+        }
+        /*
+        private bool DisplayMessageToTopic(UserModel model)
+        {
+            MessageModel newMsg = new MessageModel
+            {
+                Username = Username,
+                UsernameColor = userNameColor,
+                ImageSource = _profilePicture,
+                Message = Message,
+                Time = DateTime.Now,
+                IsFromMe = true,
+                FirstMessage = true
+            };
+
+            return Client.SendMessageToTopic(Converter.UserModelToTopicModel(model), newMsg);
+        }
+        */
         public void CreateTopic()
         {
             Client.CreateTopic("testTopic"); 

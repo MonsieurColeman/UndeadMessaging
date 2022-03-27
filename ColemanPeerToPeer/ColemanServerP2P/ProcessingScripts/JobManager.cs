@@ -60,9 +60,8 @@ namespace ColemanServerP2P
             _PeerService.GetListOfUsers(users);
 
             //send user list of topics
-
             ObservableCollection<TopicModel> topics = (TopicList.GetNumberOfTopics() != 0) ? TopicList.GetCurrentTopics() : new ObservableCollection<TopicModel>();
-            //_PeerService.GetListOfTopics(response);
+            _PeerService.GetListOfTopics(topics);
 
             //send everyone else in the userlist the user's endpoint
             for (int i = 0; i < users.Count; i++)
@@ -110,9 +109,19 @@ namespace ColemanServerP2P
         {
             UserModel userModel = job.messageFiller;
             string topicName = job.messageBody;
+            TopicModel returnTopic = TopicList.GetTopicFromTopicName(topicName);
 
             //remove from topic list
             TopicList.RemoveUserFromTopic(topicName, userModel);
+
+            //update user screen
+            EstablishConnectionWithUser(job.sourceEndpoint);
+            _PeerService.UnsubscribeFromTopic(new MessageProtocol
+            {
+                sourceEndpoint = Host.ServerEndpoint,
+                destinationEndpoint = job.sourceEndpoint,
+                messageProtocolType = MessageType.leaveTopic
+            }, returnTopic);
         }
 
         private static void TopicReceivedMessage(MessageProtocol job)
@@ -122,6 +131,7 @@ namespace ColemanServerP2P
             TopicModel topic = job.messageFiller;
             job.messageBody = msgModel.Message;
             job.messageFiller = null;
+            topic.ServerEndpoint = Host.ServerEndpoint;
 
             //if exist, notify all members with the topic of the topic message
             List<UserModel> usersInTopic = TopicList.TopicReceivedMsg(topic, msgModel);

@@ -10,7 +10,7 @@ namespace ServiceOutliner
     public class UserModel : ObservableObject
     {
         public string Username { get; set; }
-        public string ChatName { get; set; }
+        public virtual string ChatName { get; set; }
         public string ImageSource { get; set; }
         public string UsernameColor { get; set; }
         public string Endpoint { get; set; }

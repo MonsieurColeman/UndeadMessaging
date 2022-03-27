@@ -17,8 +17,8 @@ namespace ColemanServerP2P
             for (int i = 0; i < _list_of_topics.Count; i++)
             {
                 KeyValuePair<TopicModel, List<UserModel>> TopicItem = _list_of_topics.ElementAt(i);
-                if (!TopicItem.Value.Contains(user))
-                    TopicItem.Value.Remove(user);
+                if (!UserListContainsUser(TopicItem.Value, user))
+                    TopicItem.Value.Add(user);
             }
         }
 
@@ -29,8 +29,8 @@ namespace ColemanServerP2P
                 KeyValuePair<TopicModel, List<UserModel>> TopicItem = _list_of_topics.ElementAt(i);
                 if (TopicItem.Key.TopicName == topicName)
                 {
-                    if (TopicItem.Value.Contains(user))
-                        TopicItem.Value.Remove(user);
+                    List<UserModel> userList = TopicItem.Value;
+                    RemoveUserFromUserList(ref userList, user);
                     if (TopicItem.Value.Count == 0)
                         RemoveTopic(TopicItem.Key);
                 }
@@ -44,8 +44,8 @@ namespace ColemanServerP2P
                 KeyValuePair<TopicModel, List<UserModel>> TopicItem = _list_of_topics.ElementAt(i);
                 if (TopicItem.Key.TopicName == topic.TopicName)
                 {
-                    if (TopicItem.Value.Contains(user))
-                        TopicItem.Value.Remove(user);
+                    List<UserModel> userList = TopicItem.Value;
+                    RemoveUserFromUserList(ref userList, user);
                     if (TopicItem.Value.Count == 0)
                         RemoveTopic(TopicItem.Key);
                 }
@@ -58,9 +58,9 @@ namespace ColemanServerP2P
             for (int i = 0; i < _list_of_topics.Count; i++)
             {
                 KeyValuePair<TopicModel, List<UserModel>> TopicItem = _list_of_topics.ElementAt(i);
-                if (TopicItem.Value.Contains(user))
-                    TopicItem.Value.Remove(user);
-                if(TopicItem.Value.Count == 0)
+                List<UserModel> userList = TopicItem.Value;
+                RemoveUserFromUserList(ref userList, user);
+                if (TopicItem.Value.Count == 0)
                     RemoveTopic(TopicItem.Key);
             }
         }
@@ -81,7 +81,7 @@ namespace ColemanServerP2P
         public static bool UniqueTopicCheck(string TopicName)
         {
             for (int i = 0; i < _list_of_topics.Count; i++)
-                if (_list_of_topics.ElementAt(i).Key.TopicName == TopicName)
+                if (_list_of_topics.ElementAt(i).Key.ChatName == TopicName)
                     return false;
             return true;
         }
@@ -89,18 +89,24 @@ namespace ColemanServerP2P
         public static TopicModel GetTopicFromTopicName(string topicName)
         {
             for(int i = 0; i < _list_of_topics.Count; i++)
-                if (_list_of_topics.ElementAt(i).Key.TopicName == topicName)
+                if (_list_of_topics.ElementAt(i).Key.ChatName == topicName)
                     return _list_of_topics.ElementAt(i).Key;
             return null;
         }
 
-        private static bool UserListContains (TopicModel topic, UserModel user)
+        private static bool UserListContainsUser (List<UserModel> userList, UserModel user)
         {
-            List<UserModel> userList = _list_of_topics[topic];
             foreach (UserModel _user in userList)
                 if (_user.Endpoint == user.Endpoint)
                     return true;
             return false;
+        }
+
+        private static void RemoveUserFromUserList(ref List<UserModel> userList, UserModel user)
+        {
+            for (int i=0; i<userList.Count; i++)
+                if(userList[i].Endpoint == user.Endpoint)
+                    userList.Remove(userList[i]);
         }
 
         public static void AddTopic (TopicModel topic)
@@ -126,13 +132,6 @@ namespace ColemanServerP2P
             return GetUserListOfTopic(topic);
         }
 
-        private static TopicModel GetTopicFromTopic(TopicModel topic)
-        {
-            foreach (KeyValuePair<TopicModel,List<UserModel>> topicItem in _list_of_topics)
-                if (topicItem.Key.ChatName == topic.ChatName)
-                    return topic;
-            return null;
-        }
 
         private static List<UserModel> GetUserListOfTopic(TopicModel topic)
         {
@@ -140,6 +139,15 @@ namespace ColemanServerP2P
                 if (topicItem.Key.ChatName == topic.ChatName)
                     return topicItem.Value;
             return null;
+        }
+
+
+        private static int GetTopicIndex(TopicModel topic)
+        {
+            for(int i = 0; i < _list_of_topics.Count; i++)
+                if (_list_of_topics.ElementAt(i).Key.ChatName == topic.ChatName)
+                    return i;
+            return -1;
         }
     }
 }

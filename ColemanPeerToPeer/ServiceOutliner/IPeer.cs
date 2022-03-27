@@ -36,6 +36,9 @@ namespace ServiceOutliner
 
         [OperationContract]
         MessageProtocol GetMSG();
+
+        [OperationContract]
+        void UnsubscribeFromTopic(MessageProtocol msg, TopicModel topic);
     }
 
 }

@@ -12,10 +12,11 @@ namespace ServiceOutliner
     {
         public string TopicName { get; set; }
         public new string Username { get; set; }
-        public new string ChatName { get; set; }
+        public override string ChatName { get; set; }
         public new string ImageSource { get; set; }
         public new string UsernameColor { get; set; }
         public new string Endpoint { get; set; }
+        public string ServerEndpoint { get; set; }
         //public ObservableCollection<MessageModel> Messages { get; set; }
         private string _LastMessage;
 

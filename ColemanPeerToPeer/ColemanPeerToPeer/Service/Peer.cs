@@ -93,7 +93,7 @@ namespace ColemanPeerToPeer.Service
             MessageProtocol msg = new MessageProtocol()
             {
                 messageFiller = topics,
-                messageProtocolType = MessageType.userLeft
+                messageProtocolType = MessageType.receiveCurrentTopicsOnJoin
             };
             Client._IncomingQueue.enQ(msg);
         }
@@ -109,6 +109,12 @@ namespace ColemanPeerToPeer.Service
         }
 
         public void GetTopicMsg(MessageProtocol msg, TopicModel topic)
+        {
+            msg.messageFiller = topic;
+            Client._IncomingQueue.enQ(msg);
+        }
+
+        public void UnsubscribeFromTopic(MessageProtocol msg, TopicModel topic)
         {
             msg.messageFiller = topic;
             Client._IncomingQueue.enQ(msg);

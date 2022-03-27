@@ -128,5 +128,11 @@ namespace ColemanPeerToPeer
             _viewModel.Message = "";
         }
 
+        private void LeaveTopic(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel == null)
+                _viewModel = ViewManager.GetMainViewModelInstance();
+            _viewModel.LeaveTopic();
+        }
     }
 }

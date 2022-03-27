@@ -140,6 +140,13 @@
                                 Text="Create Topic">
                             </AccessText>
                         </Button>
+                        <Button Click="LeaveTopic" Margin="8,0,0,0">
+                            <AccessText 
+                                Margin="5" 
+                                FontWeight="Bold" 
+                                Text="Leave Topic">
+                            </AccessText>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>

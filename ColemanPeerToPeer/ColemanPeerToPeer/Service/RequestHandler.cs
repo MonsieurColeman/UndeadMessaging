@@ -39,6 +39,9 @@ namespace ColemanPeerToPeer.Service
                 case MessageType.topicMsg: //receive message from user
                     AddTopicMsgToDashboard(job);
                     break;
+                case MessageType.leaveTopic: //leave topic
+                    RemoveTopicFromDashboard(job);
+                    break;
                 default:
                     Console.WriteLine("I receive a weird message");
                     break;
@@ -55,6 +58,9 @@ namespace ColemanPeerToPeer.Service
         private static void SetupTopicForDashboard(MessageProtocol setupMsg)
         {
             ObservableCollection<TopicModel> topics = setupMsg.messageFiller;
+            //ObservableCollection<UserModel> topicDashboardObjs = new ObservableCollection<UserModel>();
+
+
             if (_Dashboard == null)
                 _Dashboard = ViewManager.GetMainViewModelInstance();
             _Dashboard.SetTopics(topics);
@@ -62,6 +68,7 @@ namespace ColemanPeerToPeer.Service
 
         private static void AddTopicToDashboard(MessageProtocol dashMsg)
         {
+            //_Dashboard.GainTopic(Converter.TopicModelToUserModel(dashMsg.messageFiller));
             _Dashboard.GainTopic(dashMsg.messageFiller);
         }
 
@@ -83,6 +90,11 @@ namespace ColemanPeerToPeer.Service
         private static void AddTopicMsgToDashboard(MessageProtocol dashMsg)
         {
             _Dashboard.AddTopicMessageToChat(dashMsg);
+        }
+
+        private static void RemoveTopicFromDashboard(MessageProtocol dashMsg)
+        {
+            _Dashboard.RemoveTopicFromDash(dashMsg.messageFiller);
         }
     }
 }
