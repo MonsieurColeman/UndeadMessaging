@@ -27,7 +27,7 @@ namespace ColemanServerP2P
             for (int i = 0; i < _list_of_topics.Count; i++)
             {
                 KeyValuePair<TopicModel, List<UserModel>> TopicItem = _list_of_topics.ElementAt(i);
-                if (TopicItem.Key.TopicName == topicName)
+                if (TopicItem.Key.ChatName == topicName)
                 {
                     List<UserModel> userList = TopicItem.Value;
                     RemoveUserFromUserList(ref userList, user);
