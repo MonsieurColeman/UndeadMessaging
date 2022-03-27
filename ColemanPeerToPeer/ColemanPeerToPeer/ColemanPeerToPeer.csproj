@@ -76,6 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MVVM\ViewModel\CreateTopicViewModel.cs" />
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="Service\BlockingQueue.cs" />
     <Compile Include="Service\Client.cs" />
@@ -84,6 +85,10 @@
     <Compile Include="Service\Peer.cs" />
     <Compile Include="TestScripts\UserMessageTester.cs" />
     <Compile Include="ViewManager.cs" />
+    <Page Include="MVVM\View\CreateTopic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MVVM\View\LoginView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

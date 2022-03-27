@@ -185,9 +185,11 @@ namespace ColemanPeerToPeer.Service
             new TopicModel()
             {
                 ChatName = topicName,
-                Username = "placeholder"
+                Username = topicName,
+                TopicName = topicName
             });
         }
+
 
         public static void LeaveTopic(string topicName)
         {

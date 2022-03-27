@@ -102,7 +102,7 @@ namespace ColemanPeerToPeer
         {
             if(_viewModel == null)
                 _viewModel = ViewManager.GetMainViewModelInstance();
-            _viewModel.CreateTopic();
+            _viewModel.ShowCreateTopicDialog();
         }
 
         private void Message_KeyDown(object sender, KeyEventArgs e)

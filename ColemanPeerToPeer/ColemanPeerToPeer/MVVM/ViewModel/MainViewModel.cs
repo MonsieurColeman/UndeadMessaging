@@ -461,9 +461,10 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
             return Client.SendMessageToTopic(Converter.UserModelToTopicModel(model), newMsg);
         }
         */
-        public void CreateTopic()
+        public void ShowCreateTopicDialog()
         {
-            Client.CreateTopic("testTopic"); 
+            CreateTopicView newTopicWindow = new CreateTopicView();
+            newTopicWindow.ShowDialog(); 
         }
     }
 }

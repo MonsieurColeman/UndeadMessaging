@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,19 +34,32 @@ namespace ColemanPeerToPeer
 
         private void Btn_Login(object sender, RoutedEventArgs e)
         {
+            string proposedUsername = usernameTextbox.Text;
+
             //make sure textboxes have values
-            if (String.IsNullOrWhiteSpace(userColorTextbox.Text) || String.IsNullOrWhiteSpace(usernameTextbox.Text))
+            if (String.IsNullOrWhiteSpace(userColorTextbox.Text) || String.IsNullOrWhiteSpace(proposedUsername))
                 return;
 
+            //truncate username if too long
+            if(proposedUsername.Length > 15)
+                proposedUsername = proposedUsername.Substring(0, 15);
+
+            if (!Regex.IsMatch(proposedUsername, @"^[A-Za-z0-9_-]*$"))
+            {
+                MessageBox.Show("Notice! \n\nYour username may only contain:" +
+                    "\n > Letters \n > Numbers \n > Underscores \n > Dashes \n > 15 characters");
+                return;
+            }
+
             //Make call to server
-            if (!PerformLogin(usernameTextbox.Text, userColorTextbox.Text))
+            if (!PerformLogin(proposedUsername, userColorTextbox.Text))
             {
                 NotifyUserNameWasTaken();
                 return;
             }
 
             //Set the Dashboard Username
-            ViewManager.GetMainViewModelInstance().Username = usernameTextbox.Text;
+            ViewManager.GetMainViewModelInstance().Username = proposedUsername;
 
             //Show Dashboard
             _MainWindow.loginSuccessful = true;

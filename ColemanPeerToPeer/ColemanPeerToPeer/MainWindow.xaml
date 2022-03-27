@@ -24,7 +24,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.ColumnSpan="3"
@@ -71,9 +70,14 @@
                 <RowDefinition />
                 <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
-            <Label Content="Users"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label Content="Chats"
                    VerticalAlignment="Center"
                    FontWeight="Medium"
+                   Grid.Column="2"
                    Foreground="DarkOrange"
                    Margin="8,0,8,0"/>
 
@@ -81,10 +85,10 @@
                       SelectedItem="{Binding SelectedChat}"
                       Background="Transparent"
                       BorderThickness="0"
-                      Grid.Row="1"
+                      Grid.Row="1" Grid.Column="1"
                       ItemContainerStyle="{StaticResource UserCard}"/>
 
-            <StackPanel Grid.Row="2"
+            <StackPanel Grid.Row="2" Grid.ColumnSpan="2"
                         Orientation="Horizontal"
                         Background="DarkOrange">
                 <Border CornerRadius="25"
@@ -105,7 +109,9 @@
                 </StackPanel>
 
             </StackPanel>
-
+            <StackPanel Background="Orange" Grid.RowSpan="2">
+                
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Column="1"
@@ -131,7 +137,7 @@
                            Margin="5,0,0,0"
                            VerticalAlignment="Center" Grid.ColumnSpan="2"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="1" Margin="0,0,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1" Margin="0,0,0,0">
                         <Button Click="CreateTopic">
                             <AccessText 
                                 Name="MessageViewLeaveChatButtonLabel"
@@ -205,24 +211,9 @@
             </Grid>
         </Grid>
 
-        <Grid Background="Ivory"
-              Grid.Row="1" Grid.Column="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Label Content="Topics"
-                   VerticalAlignment="Center"
-                   FontWeight="Medium"
-                   Foreground="DarkOrange"
-                   Margin="8,0,8,0"/>
 
-            <ListView ItemsSource="{Binding Topics}"
-                      SelectedItem="{Binding SelectedChat}"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      Grid.Row="1"
-                      ItemContainerStyle="{StaticResource TopicCard}"/>
-        </Grid>
+
+
+
     </Grid>
 </Window>
