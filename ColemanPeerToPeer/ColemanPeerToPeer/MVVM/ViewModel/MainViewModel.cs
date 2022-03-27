@@ -251,6 +251,7 @@ namespace ColemanPeerToPeer.MVVM.ViewModel
                 FirstMessage = true
             };
             topic.Messages.Add(dashMsg);
+            SelectedChat.LastMessage = SelectedChat.LastMessage;
         }
 
         /*

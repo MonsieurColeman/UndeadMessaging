@@ -28,7 +28,7 @@ namespace ServiceOutliner
         }
         private string _LastMessage;
 
-        public string LastMessage
+        public virtual string LastMessage
         {
             get { return (Messages != null) ? Messages.Last().Message : ""; }
             set { _LastMessage = value;

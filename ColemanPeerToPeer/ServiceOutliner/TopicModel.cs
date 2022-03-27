@@ -17,19 +17,18 @@ namespace ServiceOutliner
         public new string UsernameColor { get; set; }
         public new string Endpoint { get; set; }
         public string ServerEndpoint { get; set; }
-        //public ObservableCollection<MessageModel> Messages { get; set; }
         private string _LastMessage;
 
-        /*
-        public new string LastMessage
+        
+        public override string LastMessage
         {
-            get { return (Messages != null) ? Username+": "+Messages.Last().Message : ""; }
+            get { return (Messages != null) ? Messages.Last().Message : ""; }
             set
             {
                 _LastMessage = value;
                 OnPropertyChanged();
             }
         }
-        */
+        
     }
 }
