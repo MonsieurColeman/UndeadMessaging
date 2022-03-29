@@ -49,10 +49,12 @@ namespace ColemanPeerToPeer.Service
 
         public static void HostARecieveChannel()
         {
-            StartListening(); //create channel and set endpoint
+            //create channel and set endpoint
+            StartListening();
 
             //Start thread to listen to inbound blocking queue to process jobs
             Thread rvcThread = new Thread(ReceiveThreadProc);
+
             //rvcThread.IsBackground = true;
             rvcThread.Start();
         }
@@ -95,7 +97,7 @@ namespace ColemanPeerToPeer.Service
                     {
                         return;
                     }
-                    Console.WriteLine(ex.Message + "ooga booga");
+                    Console.WriteLine(ex.Message);
                 }
             }
 
@@ -125,13 +127,12 @@ namespace ColemanPeerToPeer.Service
             {
                 sourceEndpoint = myEndpoint,
                 messageBody = username,
-                messageFiller = new JavaScriptSerializer().Serialize(userProfile),
                 messageProtocolType = MessageType.join,
                 destinationEndpoint = "Server"
             };
 
             //Send Message To Server
-            return serverService.Join(msg);
+            return serverService.Join(msg, userProfile);
         }
 
         public static void EstablishConnectionWithUser(string endpoint)

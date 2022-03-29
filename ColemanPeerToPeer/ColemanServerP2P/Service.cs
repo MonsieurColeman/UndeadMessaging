@@ -54,8 +54,6 @@ namespace ColemanServerP2P
                 destinationEndpoint = m.destinationEndpoint
             };
 
-            Console.WriteLine(userModel.Username);
-
             Host._IncomingQueue.enQ(msg);
             return true;
         }
@@ -65,31 +63,7 @@ namespace ColemanServerP2P
             return Host._IncomingQueue.deQ();
         }
 
-        public void SendComplicatedMsg(string msg)
-        {
-            MessageProtocol convertedMsg = new JavaScriptSerializer().Deserialize<MessageProtocol>(msg);
-            Host._IncomingQueue.enQ(convertedMsg);
-        }
-
-        public bool JoinComplicated(string m)
-        {
-            MessageProtocol msg = new JavaScriptSerializer().Deserialize<MessageProtocol>(m);
-
-            if (msg.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(msg.messageBody))
-            {
-                Host._IncomingQueue.enQ(msg);
-                return true;
-            }
-            return false;
-        }
-
-        public bool TestMessage(MessageProtocol m)
-        {
-            Host._IncomingQueue.enQ(m);
-            return true;
-        }
-
-        public bool JoinBetter(MessageProtocol m, UserModel userProfile)
+        public bool Join(MessageProtocol m, UserModel userProfile)
         {
             if (!(m.messageProtocolType == MessageType.join && UserList.UniqueUserCheck(m.messageBody)))
                 return false;

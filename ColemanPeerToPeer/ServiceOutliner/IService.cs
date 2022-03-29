@@ -19,22 +19,10 @@ namespace ServiceOutliner
         MessageProtocol GetMSG();
 
         [OperationContract]
-        bool Join(MessageProtocol msg);
-
-        [OperationContract]
-        bool JoinBetter(MessageProtocol msg, UserModel userProfile);
+        bool Join(MessageProtocol msg, UserModel userProfile);
 
         [OperationContract]
         void Leave(MessageProtocol msg, UserModel userProfile);
-
-        [OperationContract]
-        void SendComplicatedMsg(string msg);
-
-        [OperationContract]
-        bool JoinComplicated(string m);
-
-        [OperationContract]
-        bool TestMessage(MessageProtocol m);
 
         [OperationContract]
         void LeaveTopic(MessageProtocol msg, UserModel user);
