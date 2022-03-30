@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ This file:
+-Handles the startup logic of the application
+-Handles some button behaviors for the client view
+ */
+
+using System;
 using System.Windows;
 using ColemanPeerToPeer.MVVM.ViewModel;
 using System.Windows.Input;
@@ -14,13 +20,11 @@ namespace ColemanPeerToPeer
     {
 
         private MainViewModel _viewModel;
-        private string username = "Me";
-        private string profileColor = "#000000";
-        string profilePicture = "https://picsum.photos/200/300";
-        public bool loginSuccessful = false;
+        public bool loginSuccessful = false; //used to determine whether to shutdown app
 
         #region Startup Functions
         public MainWindow()
+        //Handles app setup
         {
             InitializeComponent();
             ViewManager.SetMainWindowInstance(this); //used to keep aid UI windows
@@ -29,16 +33,17 @@ namespace ColemanPeerToPeer
             loginView.ShowDialog();
             if(!loginSuccessful)
                 Application.Current.Shutdown();
-
         }
 
         private void ListView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        // if message is added to list view, scroll to the new item into view 
         {
-            // if message is added to list view, scroll to the new item into view 
             if (e.Action == NotifyCollectionChangedAction.Add)
                 MessageListView.ScrollIntoView(e.NewItems[0]);  
         }
+        #endregion
 
+        #region HelperFunctions
         private void ConnectToMainViewModel()
         {
             _viewModel = ViewManager.GetMainViewModelInstance();
@@ -49,21 +54,7 @@ namespace ColemanPeerToPeer
             if (_viewModel == null)
                 ConnectToMainViewModel();
         }
-
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragMove();
-            }
-        }
         #endregion
-
-        public void Btn_AddMessage(object sender, RoutedEventArgs e)
-        {
-            ViewModelCheck();
-            //_viewModel.AddMessageToChat("cheese");
-        }
 
         #region Window Ease of Use Functions
         private void Btn_Close_Click(object sender, RoutedEventArgs e)
@@ -85,22 +76,25 @@ namespace ColemanPeerToPeer
             else
                 App.Current.MainWindow.WindowState = WindowState.Normal;
         }
+
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        //Aids app accessibility
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
+        }
         #endregion
 
-        private void Btn_SendMessage(object sender, RoutedEventArgs e)
+        #region Button Behaviors
+        public void Btn_AddMessage(object sender, RoutedEventArgs e)
         {
-            /*
-            MainViewModel ad = new MainViewModel();
-            MessageModel aa = new MessageModel();
-            aa.Message = "sdsdsd";
-            ad.Messages.Add(aa);
-            */
-            MessageBox.Show("no");
+            ViewModelCheck();
         }
-
         private void CreateTopic(object sender, RoutedEventArgs e)
         {
-            if(_viewModel == null)
+            if (_viewModel == null)
                 _viewModel = ViewManager.GetMainViewModelInstance();
             _viewModel.ShowCreateTopicDialog();
         }
@@ -111,5 +105,16 @@ namespace ColemanPeerToPeer
                 _viewModel = ViewManager.GetMainViewModelInstance();
             _viewModel.LeaveTopic();
         }
+        #endregion
     }
 }
+
+/*
+ Maintenance History
+
+0.1 Off-loaded everything to mainViewModel
+0.4 Added window ease of use functions
+0.6 Added scroll view behavior
+0.8 Added Login View Dialog to start the application
+1.0 Added comments and history
+ */

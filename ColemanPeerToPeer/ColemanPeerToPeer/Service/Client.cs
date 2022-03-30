@@ -32,13 +32,14 @@ namespace ColemanPeerToPeer.Service
         public static string _usernameColor = GlobalStrings.color_black;
         public static string _profilePicture = GlobalStrings.lipsum_Image;
 
+        #region ServiceSetup
         public static void StartClientBehavior()
         {
             EstablishConnectionWithServer(LoginView._url);
             HostARecieveChannel();
         }
-
         public static void EstablishConnectionWithServer(string serverEndPoint)
+        /* Connects to server's service*/
         {
             _serverEndpoint = serverEndPoint; //set class varible
             WSHttpBinding binding = new WSHttpBinding();
@@ -48,6 +49,7 @@ namespace ColemanPeerToPeer.Service
         }
 
         public static void HostARecieveChannel()
+        /* Hosts a Peer Service and sets a thread to wait at the respective queue */
         {
             //create channel and set endpoint
             StartListening();
@@ -60,16 +62,22 @@ namespace ColemanPeerToPeer.Service
         }
 
         private static void ReceiveThreadProc()
+        /* Sets a thread to wait at the incoming blocking queue
+           which will call the main thread to update the ui when it receives
+           an order */
         {
             MessageProtocol job;
             while (true)
             {
                 job = _IncomingQueue.deQ();
+                if (job.messageProtocolType == MessageType.endQueue)
+                    continue;
                 Application.Current.Dispatcher.Invoke(() => RequestHandler.ProcessJobRequeust(job));
             }
         }
 
         private static void CreateRecvChannel(string address)
+        /* Creates a channel to listen to at the given address of Peer type service */
         {
             WSHttpBinding binding = new WSHttpBinding();
             Uri baseAddress = new Uri(address);
@@ -79,6 +87,7 @@ namespace ColemanPeerToPeer.Service
         }
 
         static void StartListening()
+        /* Queries various ports for an open port to host a channel on */
         {
             int localPort = 4040;
             while (true)
@@ -102,12 +111,10 @@ namespace ColemanPeerToPeer.Service
             }
 
         }
+        #endregion
 
-
-        /* 
- * This function is responsible for setting up a connection relationship with the server
- */
         public static bool JoinServer(string username, string usernameColor, string imageSource = "")
+        // Sends a message to the Server's service indicating our intention to join
         {
             //Get endpoint from instance variable
             string myEndpoint = _myEndpoint;
@@ -128,7 +135,7 @@ namespace ColemanPeerToPeer.Service
                 sourceEndpoint = myEndpoint,
                 messageBody = username,
                 messageProtocolType = MessageType.join,
-                destinationEndpoint = "Server"
+                destinationEndpoint = _serverEndpoint
             };
 
             //Send Message To Server
@@ -136,6 +143,7 @@ namespace ColemanPeerToPeer.Service
         }
 
         public static void EstablishConnectionWithUser(string endpoint)
+        //* Attempts to connect to a user's peer service based on given endpoint *//
         {
             WSHttpBinding binding = new WSHttpBinding();
             EndpointAddress address = new EndpointAddress(endpoint);
@@ -144,17 +152,12 @@ namespace ColemanPeerToPeer.Service
         }
 
         public static bool SendPrivateMessage(UserModel user, string message)
+        // Connects to User by thier endpoints and delivers a message to their Peer Service
         {
             EstablishConnectionWithUser(user.Endpoint);
             try
             {
-                _PeerService.SendMSG(new MessageProtocol()
-                {
-                    sourceEndpoint = _myEndpoint,
-                    messageBody = message,
-                    messageProtocolType = MessageType.privateMessage,
-                    destinationEndpoint = user.Endpoint
-                });
+                _PeerService.SendMSG(CreateMsgProto(user.Endpoint, MessageType.privateMessage, message));
                 return true;
             }
             catch (Exception ex)
@@ -164,58 +167,45 @@ namespace ColemanPeerToPeer.Service
         }
 
         public static bool SendMessageToTopic(TopicModel topic, MessageModel msg)
+        // Delivers message to server's service to post to topic
         {
-            /*
             try
-            {*/
-                serverService.MsgTopic(new MessageProtocol()
-                {
-                    sourceEndpoint = _myEndpoint,
-                    messageProtocolType = MessageType.topicMsg,
-                    destinationEndpoint = _serverEndpoint
-                },
-                msg, topic);
-                return true; /*
+            {
+                serverService.MsgTopic(CreateMsgProto(_serverEndpoint, MessageType.topicMsg), msg, topic);
+                return true;
             }
             catch (Exception ex)
             {
                 return false;
-            }*/
+            }
         }
 
         public static bool CreateTopic(string topicName)
+        // Indicate to server's service via msg protocol that we wish to create a topic
         {
-            return serverService.CreateTopic(new MessageProtocol()
-            {
-                sourceEndpoint= _myEndpoint,
-                messageProtocolType= MessageType.topicCreate,
-                destinationEndpoint = _serverEndpoint
-            },
-            new TopicModel()
-            {
-                ChatName = topicName,
-                Username = topicName,
-                TopicName = topicName
-            });
+            return serverService.CreateTopic(
+                CreateMsgProto(_serverEndpoint, MessageType.topicCreate),
+                new TopicModel()
+                {
+                    ChatName = topicName,
+                    Username = topicName,
+                    TopicName = topicName
+                });
         }
 
-
         public static void LeaveTopic(string topicName)
+        //Delivers a msg to through the Server's Service indicating a desire to leave given topic
         {
-            serverService.LeaveTopic(new MessageProtocol()
-            {
-                sourceEndpoint = _myEndpoint,
-                messageBody = topicName,
-                messageProtocolType = MessageType.leaveTopic,
-                destinationEndpoint = _serverEndpoint
-            },
-            myUserModel
-            );
+            serverService.LeaveTopic(
+                CreateMsgProto(_serverEndpoint, MessageType.leaveTopic, topicName),
+                myUserModel);
             return;
         }
 
         public static void ShutdownChat(ObservableCollection<UserModel> Userlist)
+        /* Broadcasts userLeft msg and shutdowns blocking queue */
         {
+            //Tell every one that i am done talking
             UserModel user;
             for (int i = 0; i < Userlist.Count; i++)
             {
@@ -225,15 +215,17 @@ namespace ColemanPeerToPeer.Service
                 EstablishConnectionWithUser(user.Endpoint);
                 _PeerService.UserLeft(myUserModel);
             }
-            serverService.Leave(new MessageProtocol()
-            {
-                sourceEndpoint = _myEndpoint,
-                messageProtocolType = MessageType.userLeft,
-                destinationEndpoint = _serverEndpoint
-            }, myUserModel);
+
+            //tell my thread to stop working
+            _IncomingQueue.enQ(CreateMsgProto(_myEndpoint, MessageType.endQueue));
+
+            //tell server that it's over between us
+            serverService.Leave(CreateMsgProto(_serverEndpoint,MessageType.userLeft), myUserModel);
         }
 
+        #region Helper Functions
         public static UserModel SetMyUserModel(string username, string usernameColor, string imageSource = "")
+        //Sets class variable
         {
             UserModel userProfile = new UserModel()
             {
@@ -247,13 +239,40 @@ namespace ColemanPeerToPeer.Service
         }
 
         public static UserModel GetMyUserModel()
+        //A function for other classes to get application's usermodel
         {
             return myUserModel;
         }
 
         public static string GetMyEndpoint()
+        //A function for other classes to get application's endpoint
         {
             return _myEndpoint;
         }
+
+        private static MessageProtocol CreateMsgProto(string destEndpoint, MessageType msgType, string msg="", dynamic filler=null)
+        //A helper function to follow the D-R-Y principle
+        {
+            return new MessageProtocol()
+            {
+                destinationEndpoint = destEndpoint,
+                messageBody = msg,
+                messageFiller = filler,
+                messageProtocolType=msgType,
+                sourceEndpoint = _myEndpoint
+            };
+        }
+        #endregion
     }
 }
+
+/*
+ Maintenance History
+
+0.3 File created to be the intermediary between service implementation and display view model
+0.5 Added thread handling and blocking queue
+0.6 Added core application variables to be reference by other classes
+0.8 Finished added functionality for topics
+1.0 Refactored code and added topics
+
+ */

@@ -33,5 +33,8 @@ namespace ServiceOutliner
         privateMessage,
         topicMsg,
         leaveTopic,
+
+        //serviceRelated
+        endQueue
     }
 }
